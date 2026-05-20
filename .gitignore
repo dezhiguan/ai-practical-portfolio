@@ -1,0 +1,157 @@
+# =============================================================================
+# AI Practical Portfolio — .gitignore
+# Java 技术栈 + 多模块 AI 应用（ai-common-infra / xhs-mom-helper / smart-job-agent）
+# =============================================================================
+
+# --- 操作系统 ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- IDE / 编辑器 ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+.apt_generated/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.swp
+*.swo
+*~
+
+# --- Java 编译产物 ---
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# --- Maven ---
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# --- Gradle ---
+.gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# --- Spring Boot ---
+spring-boot-*.log
+
+# --- 日志与运行时 ---
+logs/
+*.log
+*.log.*
+*.out
+*.pid
+*.seed
+*.pid.lock
+
+# --- 环境变量与密钥（切勿提交） ---
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.jks
+secrets/
+credentials.json
+application-local.yml
+application-local.yaml
+application-local.properties
+application-*.local.yml
+application-*.local.yaml
+application-*.local.properties
+
+# --- 测试与覆盖率 ---
+coverage/
+.nyc_output/
+jacoco.exec
+*.exec
+test-output/
+surefire-reports/
+failsafe-reports/
+
+# --- 前端（若后续增加 Vue/React 等） ---
+node_modules/
+dist/
+.npm
+.yarn/
+.pnp.*
+*.tsbuildinfo
+.eslintcache
+.parcel-cache/
+.vite/
+.nuxt/
+.output/
+.next/
+storybook-static/
+
+# --- Docker（本地覆盖，保留仓库内 compose 配置） ---
+docker-compose.override.yml
+docker-compose.*.local.yml
+.docker/
+
+# --- 本地数据库与数据文件 ---
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+data/
+pgdata/
+mysql-data/
+redis-data/
+
+# --- AI / RAG 本地产物（向量索引、上传素材等） ---
+uploads/
+temp/
+tmp/
+.cache/
+embeddings/
+vector-store/
+chroma/
+*.index
+*.faiss
+
+# --- 打包与发布产物 ---
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+out/
+release/
+
+# --- 杂项 ---
+*.bak
+*.tmp
+*.orig
