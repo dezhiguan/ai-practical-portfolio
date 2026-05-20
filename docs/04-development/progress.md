@@ -6,7 +6,7 @@
 第一阶段：通用 AI 技术底座
 ```
 
-**整体状态：** 文档体系与目录骨架已就绪；底座架构/数据库/接口设计正文已完成；编码未开始。
+**整体状态：** 文档体系与目录骨架已就绪；底座架构/数据库/接口/全项目技术栈说明已完成；编码未开始。
 
 ---
 
@@ -86,7 +86,14 @@ docs/04-development/      → frontend/backend-development-guide 占位
 - 约定：业务前端不直连底座与大模型；Invoke 为唯一 AI 入口
 - 未包含：实现代码、OpenAPI 文件、流式/批量接口
 
-### 3.9 开发过程文档
+### 3.9 技术栈说明（2026-05-21）
+
+- [technology-stack.md](../03-architecture/technology-stack.md) 正文已完成
+- 整体：Java 17 + Spring Boot 3 + MySQL 8 + Vue 3（业务/管理端分阶段）
+- 第一阶段：自研 Gateway、无 Redis/RAG/Agent；求职第三阶段 PG+pgvector
+- T-001 待锁定：JPA vs MyBatis-Plus、Maven、首个模型厂商
+
+### 3.10 开发过程文档
 
 持续维护：`progress.md`、`decision-log.md`、`ai-handoff.md`、`task-board.md`
 
@@ -124,7 +131,7 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 ## 六、待确认事项（进入 T-008 / T-012 前）
 
-1. Java 后端版本与构建方式（guideline 为 Java 技术栈）
+1. ~~Java 后端版本~~ → Java 17 + Spring Boot 3（见 technology-stack.md）；构建工具 JPA/ORM 待 T-001 锁定
 2. 管理端前端形态及目录（是否增加 `ai-common-infra/frontend/`）
 3. ~~调用日志存储方案~~ → 已定为关系型 DB（见数据库设计 §2.1）
 4. 首个大模型供应商

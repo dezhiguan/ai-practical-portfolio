@@ -80,6 +80,7 @@
 - [x] `ai-common-infra-architecture.md` 正文（模块边界、调用链、组件职责、阶段范围、T-xxx 映射）
 - [x] `ai-common-infra-database.md` 正文（10 张第一阶段表、数据来源、索引、T-018 对齐）
 - [x] `ai-common-infra-api.md` 正文（Invoke + 6 类 Admin 查询、错误码、调用边界）
+- [x] `technology-stack.md` 正文（全项目分阶段技术选型与原因）
 - [x] `frontend-development-guide.md`、`backend-development-guide.md` 占位
 - [x] README 第三节目录树更新
 

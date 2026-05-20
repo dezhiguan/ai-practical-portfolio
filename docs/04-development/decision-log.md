@@ -147,3 +147,27 @@
 **原因：** 对齐架构 §2.3 与项目红线；密钥不暴露给浏览器。
 
 ---
+
+## 2026-05-21：全项目技术栈基线
+
+**决策：** 后端统一 **Java 17 + Spring Boot 3.x + MySQL 8**；前端统一 **Vue 3 + TypeScript + Vite + Element Plus**（分阶段建设）；AI 采用**自研 Gateway + HTTP Provider Adapter**，第一阶段不引入 Spring AI / Agent 框架 / Redis / RAG。
+
+**原因：** 与 guideline「基于 Java 技术栈」一致；控制首阶段复杂度；底座与业务职责边界清晰。
+
+---
+
+## 2026-05-21：RAG 与 Agent 技术延后
+
+**决策：** RAG 仅在第三阶段 `smart-job-agent` 引入，推荐 **PostgreSQL + pgvector + Tika + Embedding API**；Agent 采用**业务内工作流表 + 状态机**，每步 LLM 仍调底座 Invoke；不使用 LangChain4j 作为首版方案。
+
+**原因：** 需求与架构明确底座不含 RAG/编排；避免过早引入向量库与 Agent 框架运维成本。
+
+---
+
+## 2026-05-21：缓存与文件存储分阶段
+
+**决策：** 第一阶段限流/熔断/配置缓存用 **Caffeine 单机内存**；Redis 延后至多实例或业务 Session 需要时。文件存储：底座无；小红书第二阶段 **本地目录 + MinIO（推荐）** 存素材。
+
+**原因：** 单人/小团队、单机部署足够；符合「不过度设计」原则。
+
+---
