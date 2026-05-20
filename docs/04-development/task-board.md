@@ -70,6 +70,9 @@
 
 - [x] `ai-common-infra-development-plan.md`（T-001～T-050，**2026.v2** 任务字段齐全，含 T-037～T-039）
 - [x] 全局文档一致性检查与修订（2026-05-21，过程/总纲文档 + 库表/开发计划 PostgreSQL 对齐）
+- [x] 设计文档与技术栈对齐（2026-05-21：架构/库表/API/产品/需求/development-plan + command-templates §十一）
+- [x] 底座专项一致性检查（2026-05-21：需求↔架构↔库表↔API↔产品↔开发计划；追溯矩阵已写入各文档）
+- [x] [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) 全链路映射表（含缺失/冲突/过度设计标记）
 
 ### 目录结构（本次）
 

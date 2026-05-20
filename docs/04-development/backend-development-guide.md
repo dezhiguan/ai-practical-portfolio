@@ -9,7 +9,7 @@
 
 本文档将约定全项目后端工程的通用规范，包括但不限于：
 
-1. 技术栈与版本（与 [00-project-guideline.md](../00-project-guideline.md) 对齐）
+1. 技术栈与版本（以 [technology-stack.md](../03-architecture/technology-stack.md) 为准：Java 21、Spring Boot 3、Maven、MyBatis Plus、PostgreSQL）
 2. 模块与包结构约定
 3. 统一返回结构、异常处理、请求追踪（底座 T-002 产出可对齐写入）
 4. 配置、日志、本地启动方式
@@ -31,5 +31,6 @@
 
 ## 关联文档
 
+- [technology-stack.md](../03-architecture/technology-stack.md)
 - [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md)
 - [development-plan.md](./development-plan.md)

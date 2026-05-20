@@ -42,6 +42,7 @@
 | [ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) | 4.7 日志字段、4.6 统计、4.8～4.9 限流与成本 |
 | [ai-common-infra-product.md](../02-product/ai-common-infra-product.md) | 列表筛选、详情信息块、统计维度 |
 | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) | 持久化层定位、日志与失败追踪关系 |
+| [technology-stack.md](../03-architecture/technology-stack.md) | 主库 PostgreSQL、MyBatis Plus、Flyway |
 
 ---
 
@@ -54,6 +55,8 @@
 | **介质** | **PostgreSQL**（与 [technology-stack.md](../03-architecture/technology-stack.md) 一致，建议 14+ / 16+） |
 | **原因** | 调用日志需按多维度筛选分页；配置表需关联查询；AC-1～AC-7 以事务一致性写入为主；与全项目技术基准统一 |
 | **备选** | 调用量极大后的历史日志归档可走对象存储 + 索引表（后续扩展，本阶段不做） |
+| **数据访问** | **MyBatis Plus** + Flyway 迁移（T-001 / T-018）；**不使用** JPA 作为默认 ORM |
+| **禁止主库** | MySQL、MongoDB 等未在 technology-stack 中确认的主库方案 |
 
 ### 2.2 命名约定
 
@@ -540,19 +543,19 @@ ai_quota_usage_daily (按日汇总，逻辑依赖 invocation_log)
 
 ---
 
-## 九、后续需补充的接口文档（`docs/06-api/`）
+## 九、与接口文档对照
 
-数据库设计完成后，接口文档建议至少覆盖：
+接口正文见 [ai-common-infra-api.md](../06-api/ai-common-infra-api.md)；表级读写见 §十二。
 
-| 接口域 | 依赖表 | 说明 |
-|--------|--------|------|
-| AI 调用（对业务） | 不写库表暴露，写 `ai_invocation_log` | 统一 invoke |
-| 调用日志列表/详情 | `ai_invocation_log`、`ai_invocation_attempt` | T-021、T-022、T-034 |
-| Token/成本汇总 | `ai_invocation_log` | T-031、T-035 |
-| 失败统计 | `ai_invocation_log` | T-036、T-041 |
-| 路由配置查询 | `ai_route_rule`、`ai_route_fallback`、`ai_model` | T-044 |
-| 额度/成本设置 | `ai_quota_policy`、`ai_quota_usage_daily` | T-045 |
-| 熔断状态查询 | 内存或 `ai_circuit_breaker_state` | T-044 |
+| 接口域 | 依赖表 | API / 任务 |
+|--------|--------|------------|
+| AI 调用（对业务） | `ai_invocation_log`、`ai_invocation_attempt` | `POST /ai/invoke`；T-033 |
+| 调用日志列表/详情 | `ai_invocation_log`、`ai_invocation_attempt` | `GET /admin/invocations*`；T-021、T-022 |
+| Token/成本汇总 | `ai_invocation_log` | `GET /admin/stats/cost`；T-031 |
+| 失败统计 | `ai_invocation_log` | `GET /admin/stats/failures`；T-027 |
+| 路由/模型查询 | `ai_route_*`、`ai_model*` | `GET /admin/routes`、`GET /admin/models` |
+| 日成本配额 | `ai_quota_*` | `GET /admin/quota/daily`；T-039、T-032 |
+| 熔断状态 | 运行时 + 可选扩展表 | `GET /admin/routes` 的 `health`；T-029 |
 
 ---
 
@@ -573,12 +576,32 @@ ai_quota_usage_daily (按日汇总，逻辑依赖 invocation_log)
 |------|------|
 | 架构设计 | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) |
 | 需求说明 | [ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) |
+| 全链路映射表 | [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) |
 | 开发计划 | [ai-common-infra-development-plan.md](../04-development/ai-common-infra-development-plan.md) |
 
 ---
 
-## 十二、文档版本记录
+## 十二、表与 API 读写对照
+
+> **按表说明服务功能（含检查标记）：** [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) §四。
+
+| 表名 | 写入场景 | 读取场景（API） |
+|------|----------|-----------------|
+| `ai_invocation_log` | `POST /ai/invoke` 及拦截（限流/成本） | `GET /admin/invocations`、`GET .../{requestId}`；`GET /admin/stats/cost`、`GET /admin/stats/failures` 聚合 |
+| `ai_invocation_attempt` | Invoke 每次 Model Client 尝试 | 详情 `attempts[]` |
+| `ai_model` / `ai_model_provider` / `ai_model_pricing` | 配置种子、迁移 | `GET /admin/models` |
+| `ai_business_type` | T-006 种子 | Invoke 校验；`GET /admin/routes` |
+| `ai_route_rule` / `ai_route_fallback` | 配置种子 | Invoke 路由；`GET /admin/routes` |
+| `ai_quota_policy` / `ai_quota_usage_daily` | 日成本累加、策略配置 | `GET /admin/quota/daily`；Invoke 前置 Cost Guard |
+
+**说明：** 第一阶段统计优先对 `ai_invocation_log` 聚合，不强制 `ai_stats_daily`（§五扩展表）。
+
+---
+
+## 十三、文档版本记录
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | 2026.v1 | 2026-05-21 | 初版：10 张第一阶段表、数据来源分类、索引与任务映射 |
+| 2026.v1.1 | 2026-05-21 | 明确 MyBatis Plus + Flyway；禁止 MySQL/MongoDB 主库 |
+| 2026.v1.2 | 2026-05-21 | 关联全链路映射表 §四 |

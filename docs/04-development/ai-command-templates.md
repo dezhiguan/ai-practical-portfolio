@@ -531,14 +531,16 @@ Prompt A/B Testing
 
 1. 后端是否统一使用 Java 21 + Spring Boot 3.x + Maven
 2. 是否错误引入了 Gradle、build.gradle、settings.gradle
-3. 数据访问是否统一使用 MyBatis Plus
+3. 数据访问是否统一使用 MyBatis Plus（非 JPA 默认方案）
 4. 主数据库是否统一使用 PostgreSQL
-5. 是否在第一阶段提前引入了复杂 RAG、Milvus、LangGraph4j、OpenTelemetry 等后续技术
+5. 是否错误出现 MySQL、MongoDB 等未确认主库
 6. 前端是否统一使用 React + TypeScript + Vite + pnpm
-7. 前端是否直接调用了大模型
-8. 业务模块是否绕过通用 AI 技术底座直接调用模型供应商
-9. 接口设计是否符合 Spring Boot REST 风格
-10. 是否存在未在 technology-stack.md 中说明的新技术
+7. 是否错误优先使用 npm 或 yarn
+8. 是否在第一阶段提前引入了复杂 RAG、Milvus、LangGraph4j、OpenTelemetry 等后续技术
+9. AI 调用是否都经过通用 AI Gateway
+10. 是否存在业务模块直接调用 OpenAI / DeepSeek 供应商 API 的描述
+11. 接口设计是否符合 Spring Boot REST API 风格
+12. 是否存在未在 technology-stack.md 中说明的新技术
 
 只输出：
 

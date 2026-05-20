@@ -39,10 +39,31 @@
 | [ai-common-infra-product.md](../02-product/ai-common-infra-product.md) | 管理端信息架构 |
 | [development-plan.md](../04-development/development-plan.md) | 全项目第一阶段目标 |
 | [ai-common-infra-development-plan.md](../04-development/ai-common-infra-development-plan.md) | T-xxx 任务映射 |
+| [technology-stack.md](./technology-stack.md) | **技术基准**：语言、框架、数据库、构建工具、阶段技术边界 |
 
 ---
 
-## 二、架构目标
+## 二、技术实现约束（与 technology-stack 对齐）
+
+> 逻辑架构下文不变；**实现层**以 [technology-stack.md](./technology-stack.md) 为单一事实来源。
+
+| 类别 | 第一阶段选型 | 说明 |
+|------|----------------|------|
+| 后端语言 / 框架 | Java 21 + Spring Boot 3.x | REST API、配置、校验、异常处理 |
+| 构建工具 | **Maven**（`pom.xml`） | **禁止** Gradle、`build.gradle`、`settings.gradle` |
+| 数据访问 | **MyBatis Plus** | 配置表、日志与统计表 CRUD；**不使用** JPA/Hibernate 作为默认方案 |
+| 主数据库 | **PostgreSQL** | 第一阶段 10 张表；**不使用** MySQL、MongoDB 作为主库 |
+| 迁移 | Flyway | 与开发计划 T-001、T-018 对齐 |
+| 缓存 | Redis | 可选：限流、短期状态 |
+| AI 接入 | 自研 **AI Gateway** + HTTP Provider Adapter | 供应商（OpenAI / DeepSeek 等）**仅底座内部**适配；业务不得直连 |
+| 管理端前端 | React + TypeScript + Vite + **pnpm** + ShadCN UI | T-040 起；**禁止** npm/yarn 作为默认包管理 |
+| 第一阶段不做 | Milvus、LangGraph4j、LangChain4j、复杂 RAG、OpenTelemetry、Spring AI 全家桶 | 见本文档 §十、technology-stack §十一 |
+
+接口对外形态见 [ai-common-infra-api.md](../06-api/ai-common-infra-api.md)（Spring Boot REST，`/api/v1`）。
+
+---
+
+## 三、架构目标
 
 ### 2.1 整体目标
 
@@ -69,7 +90,7 @@
 
 ---
 
-## 三、系统上下文
+## 四、系统上下文
 
 ### 3.1 在全项目中的位置
 
@@ -105,9 +126,9 @@
 
 ---
 
-## 四、逻辑架构与模块边界
+## 五、逻辑架构与模块边界
 
-### 4.1 分层视图
+### 5.1 分层视图
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
@@ -143,7 +164,7 @@
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### 4.2 模块边界（对内划分）
+### 5.2 模块边界（对内划分）
 
 | 逻辑模块 | 职责摘要 | 边界：不负责 |
 |----------|----------|----------------|
@@ -162,7 +183,7 @@
 | **Admin / Observability** | 管理端 API + 页面所需查询与配置 | 不含小红书/求职业务页面 |
 | **Config Registry** | 模型列表、路由表、单价、阈值等配置加载 | 第一阶段不做可视化拖拽配置中心 |
 
-### 4.3 模块边界（对外）
+### 5.3 模块边界（对外）
 
 | 外部系统 | 允许 | 禁止 |
 |----------|------|------|
@@ -172,9 +193,11 @@
 
 ---
 
-## 五、核心组件职责
+## 六、核心组件职责
 
-### 5.1 AI Gateway（统一 AI 网关）
+> 与需求 §4.1～4.10 一一对应，见 §十五.1。
+
+### 6.1 AI Gateway（统一 AI 网关）
 
 **定位：** 底座对业务系统的**唯一入口**，也是单次 AI 调用的**编排中枢**。
 
@@ -191,7 +214,7 @@
 
 ---
 
-### 5.2 Model Router（多模型路由）
+### 6.2 Model Router（多模型路由）
 
 **定位：** 根据**业务类型**与静态策略，决定**本次调用的计划模型**（主模型）。
 
@@ -206,7 +229,7 @@
 
 ---
 
-### 5.3 Model Client（模型客户端）
+### 6.3 Model Client（模型客户端）
 
 **定位：** 对**某一个具体模型**执行一次供应商调用，返回统一的内部调用结果。
 
@@ -221,7 +244,7 @@
 
 ---
 
-### 5.4 Provider Adapter（供应商适配层）
+### 6.4 Provider Adapter（供应商适配层）
 
 **定位：** 位于 Model Client 之下，**按供应商**实现差异屏蔽。
 
@@ -234,7 +257,7 @@
 
 ---
 
-### 5.5 Invocation Logger（调用日志）
+### 6.5 Invocation Logger（调用日志）
 
 **定位：** 每一次 AI 调用的**事实记录**，支撑排查与审计。
 
@@ -248,7 +271,7 @@
 
 ---
 
-### 5.6 Token & Cost Service（Token 与成本统计）
+### 6.6 Token & Cost Service（Token 与成本统计）
 
 **定位：** 将单次调用的 Token 与**估算成本**结构化，并支持多维度汇总。
 
@@ -262,7 +285,7 @@
 
 ---
 
-### 5.7 Failure Tracker（失败追踪）
+### 6.7 Failure Tracker（失败追踪）
 
 **定位：** 对失败调用进行**分类、记录与统计**，支撑排障与策略优化。
 
@@ -276,7 +299,7 @@
 
 ---
 
-### 5.8 Retry Handler（重试）
+### 6.8 Retry Handler（重试）
 
 **定位：** 在**同一计划模型**（或降级流程中的当前模型）上，对 transient 错误进行有限次重试。
 
@@ -291,7 +314,7 @@
 
 ---
 
-### 5.9 Degradation Handler（模型降级）
+### 6.9 Degradation Handler（模型降级）
 
 **定位：** 当主模型路径失败且错误类型允许时，按配置**依次尝试备用模型**，对业务透明。
 
@@ -306,7 +329,7 @@
 
 ---
 
-### 5.10 协作组件（限流、熔断、成本防护）
+### 6.10 协作组件（限流、熔断、成本防护）
 
 | 组件 | 职责 |
 |------|------|
@@ -316,9 +339,9 @@
 
 ---
 
-## 六、AI 请求调用链路
+## 七、AI 请求调用链路
 
-### 6.1 主路径（成功）
+### 7.1 主路径（成功）
 
 ```text
 业务后端
@@ -345,7 +368,7 @@
                     Gateway：组装统一响应 → 业务后端
 ```
 
-### 6.2 失败、重试与降级路径
+### 7.2 失败、重试与降级路径
 
 ```text
 Model Client 返回失败（已映射失败类型）
@@ -380,7 +403,7 @@ Model Client 返回失败（已映射失败类型）
                             └─ 全部失败 ──► 记录降级链路 ──► 失败响应
 ```
 
-### 6.3 管理端查询路径（观测）
+### 7.3 管理端查询路径（观测）
 
 ```text
 管理端 UI
@@ -393,7 +416,7 @@ Admin / Observability API
     └─ 日成本上限配置     ← Cost Guard + Config Registry
 ```
 
-### 6.4 关键贯穿标识
+### 7.4 关键贯穿标识
 
 | 标识 | 用途 |
 |------|------|
@@ -404,9 +427,9 @@ Admin / Observability API
 
 ---
 
-## 七、业务系统复用方式
+## 八、业务系统复用方式
 
-### 7.1 复用原则
+### 8.1 复用原则
 
 两个业务系统**不复制**底座能力，仅通过统一调用契约接入：
 
@@ -415,7 +438,7 @@ Admin / Observability API
 3. 业务侧负责：领域 Prompt/上下文组装、结果展示与「AI 生成需人工确认」提示。
 4. 排障时以 **requestId** 在管理端与业务日志间关联。
 
-### 7.2 小红书内容运营工作台
+### 8.2 小红书内容运营工作台
 
 | 维度 | 说明 |
 |------|------|
@@ -427,7 +450,7 @@ Admin / Observability API
 
 **第二阶段集成验证点：** 至少一种生成类调用端到端：业务 → 网关 → 日志可查（需求 AC-1～AC-2）。
 
-### 7.3 智能求职 Agent 工作台
+### 8.3 智能求职 Agent 工作台
 
 | 维度 | 说明 |
 |------|------|
@@ -437,11 +460,11 @@ Admin / Observability API
 | **路由期望** | JD 分析、深度匹配等复杂任务走高能力主模型；话术/短生成可配置较低成本默认 |
 | **与 Agent 关系** | Agent **编排**（多步任务、工具调用）归属业务域；每一步 LLM 需要仍**逐步调用 Gateway**，底座不实现 Agent 状态机 |
 
-### 7.4 统计与隔离
+### 8.4 统计与隔离
 
 管理端与汇总接口通过 **projectId** 区分两业务消耗；通过 **businessType** 分析场景占比。底座自身运维调用可使用独立 projectId，避免与业务混淆。
 
-### 7.5 前端边界
+### 8.5 前端边界
 
 | 系统 | AI 相关前端行为 |
 |------|-----------------|
@@ -450,9 +473,9 @@ Admin / Observability API
 
 ---
 
-## 八、部署与工程视图（逻辑）
+## 九、部署与工程视图（逻辑）
 
-### 8.1 工程目录
+### 9.1 工程目录
 
 ```text
 ai-common-infra/
@@ -465,7 +488,7 @@ ai-common-infra/
 
 **管理端：** 产品规划为独立管理界面。架构上可采用「后端提供 Admin API + 静态或独立前端」；是否在仓库增加 `ai-common-infra/frontend/` 在 T-040 前于开发指南中确认（见决策记录）。
 
-### 8.2 与开发计划任务映射
+### 9.2 与开发计划任务映射
 
 | 架构逻辑模块 | 开发计划任务 |
 |--------------|--------------|
@@ -488,11 +511,11 @@ ai-common-infra/
 
 ---
 
-## 九、第一阶段：做什么
+## 十、第一阶段：做什么
 
 > 全项目第一阶段 = 通用 AI 技术底座。与需求文档第七章、验收 AC-1～AC-7 对齐。
 
-### 9.1 必须交付的架构能力
+### 10.1 必须交付的架构能力
 
 | 序号 | 能力 | 架构落点 |
 |------|------|----------|
@@ -508,7 +531,7 @@ ai-common-infra/
 | 10 | 基础熔断 | Circuit Breaker + 管理端可查看 |
 | 11 | 基础可观测 | Admin：日志、成本、失败、设置（产品 MVP 页面） |
 
-### 9.2 成本控制 subset（第一阶段）
+### 10.2 成本控制 subset（第一阶段）
 
 1. 每日全局成本上限（可配置，管理端可改）。
 2. 按业务类型查看成本占比。
@@ -516,7 +539,7 @@ ai-common-infra/
 
 月上限、单用户上限、高成本模型精细限制的**完整 UI** 可末期或第二阶段初补齐；架构上 Cost Guard 与 Router 预留扩展点。
 
-### 9.3 业务类型与项目标识（登记）
+### 10.3 业务类型与项目标识（登记）
 
 第一阶段在配置层登记至少：
 
@@ -527,7 +550,7 @@ ai-common-infra/
 
 ---
 
-## 十、第一阶段：不做什么
+## 十一、第一阶段：不做什么
 
 | 序号 | 不在本阶段建设 | 架构说明 |
 |------|----------------|----------|
@@ -539,11 +562,12 @@ ai-common-infra/
 | 6 | 对外 SaaS 与多组织权限 | 管理端单角色简化 |
 | 7 | 复杂告警与报表导出 | 页面查看为主 |
 | 8 | 小红书 / 求职业务功能 | 底座工程与 API 不含业务域表与流程 |
-| 9 | 数据库/接口详设 | 分别由 `05-database`、`06-api` 在 T-018 及网关稳定后编写 |
+| 9 | Milvus / LangGraph4j / 复杂 RAG / OpenTelemetry | 第三阶段或第四阶段；第一阶段不引入 |
+| 10 | Gradle / MySQL 主库 | 实现层禁止；以 Maven + PostgreSQL 为准 |
 
 ---
 
-## 十一、后续架构演进方向（非第一阶段）
+## 十二、后续架构演进方向（非第一阶段）
 
 | 方向 | 说明 |
 |------|------|
@@ -556,40 +580,88 @@ ai-common-infra/
 
 ---
 
-## 十二、需求与验收追溯
+## 十三、需求与验收追溯
 
 | 需求章节 | 本文档章节 |
 |----------|------------|
-| 4.1 统一 AI 网关 | 五.1、六 |
-| 4.2 多模型路由 | 五.2、六 |
-| 4.3 模型降级 | 五.9、六.2 |
-| 4.4 失败追踪 | 五.7 |
-| 4.5 重试 | 五.8 |
-| 4.6 Token 与成本 | 五.6 |
-| 4.7 调用日志 | 五.5 |
-| 4.8 限流与熔断 | 五.10、六 |
-| 4.9 成本控制 | 五.10、九.2 |
-| 4.10 可观测 | 六.3、七 |
-| 七、八 阶段范围 | 九、十 |
-| AC-1～AC-7 | 六.4、八.2、九 |
+| 4.1 统一 AI 网关 | 六.1、七 |
+| 4.2 多模型路由 | 六.2、七 |
+| 4.3 模型降级 | 六.9、七.2 |
+| 4.4 失败追踪 | 六.7 |
+| 4.5 重试 | 六.8 |
+| 4.6 Token 与成本 | 六.6 |
+| 4.7 调用日志 | 六.5 |
+| 4.8 限流与熔断 | 六.10、七 |
+| 4.9 成本控制 | 六.10、十.2 |
+| 4.10 可观测 | 七.3、八 |
+| 七、八 阶段范围 | 十、十一 |
+| AC-1～AC-7 | 七.4、九.2、十 |
+| 技术栈 | 二 |
+| 专项追溯矩阵 | 十五 |
 
 ---
 
-## 十三、关联文档
+## 十四、关联文档
 
 | 文档 | 路径 |
 |------|------|
 | 需求说明 | [ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) |
 | 产品设计 | [ai-common-infra-product.md](../02-product/ai-common-infra-product.md) |
 | 开发计划（任务） | [ai-common-infra-development-plan.md](../04-development/ai-common-infra-development-plan.md) |
-| 数据库设计 | `docs/05-database/`（待 T-018 后） |
-| 接口设计 | `docs/06-api/`（待网关语义稳定后） |
+| 技术栈 | [technology-stack.md](./technology-stack.md) |
+| 全链路映射表 | [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) |
+| 数据库设计 | [ai-common-infra-database.md](../05-database/ai-common-infra-database.md) |
+| 接口设计 | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) |
 
 ---
 
-## 十四、文档版本记录
+## 十五、专项一致性追溯矩阵
+
+> **完整六列映射表：** [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md)（含产品页面、API、表、技术栈及缺失/冲突/过度设计标记）。
+
+### 15.1 需求核心能力 → 架构模块
+
+| 需求 §4 | 能力 | 架构模块（§5.2 / §六） | 开发任务 |
+|---------|------|------------------------|----------|
+| 4.1 | 统一 AI 网关 | AI Gateway | T-014～T-017、T-033 |
+| 4.2 | 多模型路由 | Model Router、Config Registry | T-009、T-023 |
+| 4.3 | 模型降级 | Degradation Handler | T-024～T-026 |
+| 4.4 | 失败追踪 | Failure Tracker | T-007、T-027 |
+| 4.5 | 重试 | Retry Handler | T-024 |
+| 4.6 | Token 与成本 | Token & Cost Service | T-010、T-030～T-031 |
+| 4.7 | 调用日志 | Invocation Logger | T-018～T-022 |
+| 4.8 | 限流与熔断 | Rate Limiter、Circuit Breaker | T-028～T-029 |
+| 4.9 | 成本控制 | Cost Guard | T-032 |
+| 4.10 | 可观测 | Admin / Observability | T-021～T-022、T-031、T-034～T-046 |
+
+**说明：** 按用户限流（需求 §4.8.1）第一阶段由 T-028 实现**全局 + 按业务类型**；按用户限流列入 T-028「本次不做什么」，与需求月/用户上限 subset 一致，后续阶段增强。
+
+### 15.2 架构模块 → 数据库表
+
+| 架构模块 | 主要表 |
+|----------|--------|
+| Config Registry / Router | `ai_model_provider`、`ai_model`、`ai_model_pricing`、`ai_business_type`、`ai_route_rule`、`ai_route_fallback` |
+| Invocation Logger / Failure / Token | `ai_invocation_log`、`ai_invocation_attempt` |
+| Cost Guard / Rate Limit | `ai_quota_policy`、`ai_quota_usage_daily` |
+
+### 15.3 架构模块 → API
+
+| 能力 | API |
+|------|-----|
+| 业务调用 | `POST /api/v1/ai/invoke` |
+| 日志 | `GET /admin/invocations`、`GET /admin/invocations/{requestId}` |
+| 成本统计 | `GET /admin/stats/cost` |
+| 失败统计 | `GET /admin/stats/failures` |
+| 模型与路由 | `GET /admin/models`、`GET /admin/routes` |
+| 日成本上限 | `GET /admin/quota/daily`（推荐，§9.3 附录；T-039/T-045） |
+
+---
+
+## 十六、文档版本记录
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | 2026.v1 占位 | 2026-05-20 | 目录占位 |
 | 2026.v1 正文 | 2026-05-21 | 完成逻辑架构、调用链、组件职责、复用说明、阶段边界 |
+| 2026.v1.1 | 2026-05-21 | 新增 §二 技术实现约束；章节重编号；对齐 technology-stack |
+| 2026.v1.2 | 2026-05-21 | 专项一致性追溯矩阵 §十五；修正章节小节编号 |

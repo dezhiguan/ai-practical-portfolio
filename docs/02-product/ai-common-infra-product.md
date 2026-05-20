@@ -21,9 +21,27 @@
 ### 1.2 不在本文档展开的内容
 
 1. UI 视觉稿与高保真原型
-2. 接口路径、请求参数与响应结构
-3. 前端框架、组件库选型
-4. 业务系统（小红书、求职 Agent）的页面设计
+2. 接口路径、请求参数与响应结构（见 [ai-common-infra-api.md](../06-api/ai-common-infra-api.md)）
+3. 业务系统（小红书、求职 Agent）的页面设计
+
+### 1.3 技术栈约束（管理端实现时遵守）
+
+以 [technology-stack.md](../03-architecture/technology-stack.md) 为准：
+
+| 项 | 约定 |
+|----|------|
+| 管理端前端 | React + TypeScript + Vite + **pnpm** + ShadCN UI（开发计划 T-040 起） |
+| 数据与接口 | 仅调用底座 Admin REST API；**不得**直连大模型或供应商 URL |
+| 包管理 | 使用 **pnpm**；不默认 npm / yarn |
+
+### 1.4 依据文档
+
+| 文档 | 关系 |
+|------|------|
+| [ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) | 能力范围与验收 |
+| [ai-common-infra-module-mapping.md](./ai-common-infra-module-mapping.md) | **功能—页面—架构—API—表—技术栈** 全链路映射 |
+| [technology-stack.md](../03-architecture/technology-stack.md) | 管理端技术选型 |
+| [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) | Admin API 与页面字段对照 |
 
 ---
 
@@ -39,6 +57,20 @@
 ---
 
 ## 三、信息架构
+
+### 3.0 逻辑功能模块与架构对照
+
+> 本产品文档即「公共模块 / 管理端功能模块设计」；与 [architecture](../03-architecture/ai-common-infra-architecture.md) §5.2 逻辑模块一致。
+
+| 产品能力域 | 架构逻辑模块 | 主要页面 |
+|------------|--------------|----------|
+| 统一调用（业务侧） | AI Gateway | 无页面（业务后端调 Invoke） |
+| 调用观测 | Invocation Logger、Failure Tracker | 调用日志列表/详情 |
+| 成本观测 | Token & Cost Service | Token 与成本统计 |
+| 失败分析 | Failure Tracker | 失败统计 |
+| 路由与韧性状态 | Model Router、Circuit Breaker、Degradation | 模型路由与状态 |
+| 成本防护配置 | Cost Guard、Rate Limiter | 系统设置 |
+| 模型与单价只读 | Config Registry | 系统设置、模型路由与状态 |
 
 ### 3.1 页面清单
 
@@ -324,6 +356,19 @@ AI 技术底座管理
 | 排查失败流程 | 4.5 重试、4.4 失败类型 |
 | 确认降级流程 | 4.3 模型降级 |
 
+### 9.1 管理页面 → API 对照（第一阶段）
+
+| 页面 | 主要 API | 开发任务 |
+|------|----------|----------|
+| 调用日志列表 | `GET /api/v1/admin/invocations` | T-021、T-041 |
+| 调用日志详情 | `GET /api/v1/admin/invocations/{requestId}` | T-022、T-042 |
+| Token 与成本统计 | `GET /api/v1/admin/stats/cost` | T-031、T-043 |
+| 失败统计 | `GET /api/v1/admin/stats/failures` | T-027、T-044 |
+| 模型路由与状态 | `GET /api/v1/admin/routes`（含 `health`） | T-038、T-044 |
+| 系统设置-模型单价 | `GET /api/v1/admin/models` | T-037、T-045 |
+| 系统设置-日成本上限 | `GET /api/v1/admin/quota/daily`；`PUT` 同路径（可选） | T-039、T-032、T-045 |
+| 系统设置-限流说明 | 无独立 API；展示 `application.yml` / 文档说明 | T-003、T-028 |
+
 ---
 
 ## 十、关联文档
@@ -331,4 +376,5 @@ AI 技术底座管理
 | 文档 | 路径 |
 |------|------|
 | 需求说明 | [docs/01-requirements/ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) |
+| **全链路映射表** | [docs/02-product/ai-common-infra-module-mapping.md](./ai-common-infra-module-mapping.md) |
 | 项目总纲 | [docs/00-project-guideline.md](../00-project-guideline.md) |

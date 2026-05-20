@@ -9,7 +9,7 @@
 
 本文档将约定业务系统与管理端前端的通用规范，包括但不限于：
 
-1. 技术栈与版本
+1. 技术栈与版本（以 [technology-stack.md](../03-architecture/technology-stack.md) 为准：React、TypeScript、Vite、pnpm、ShadCN UI；前端不直连大模型）
 2. 目录与路由约定
 3. 与后端 API 的协作方式（接口文档见 `docs/06-api/`，待补充）
 4. 本地开发与联调方式
@@ -29,5 +29,6 @@
 
 ## 关联文档
 
+- [technology-stack.md](../03-architecture/technology-stack.md)
 - [ai-common-infra-product.md](../02-product/ai-common-infra-product.md)（底座管理端页面）
 - [development-plan.md](./development-plan.md)

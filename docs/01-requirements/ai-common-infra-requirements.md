@@ -25,7 +25,7 @@
 1. 系统架构与模块划分
 2. 数据库表结构
 3. 接口定义与错误码
-4. 具体技术栈、框架与部署方案
+4. 具体技术栈、框架与部署方案（见 [technology-stack.md](../03-architecture/technology-stack.md)）
 5. 业务系统（小红书、求职 Agent）的详细功能需求
 
 ### 1.3 依据文档
@@ -35,6 +35,7 @@
 | [README.md](../../README.md) | 项目组成、建设顺序、当前阶段 |
 | [docs/00-project-guideline.md](../00-project-guideline.md) | 第三章：通用 AI 技术底座大纲 |
 | [docs/04-development/development-plan.md](../04-development/development-plan.md) | 第一阶段任务对齐 |
+| [technology-stack.md](../03-architecture/technology-stack.md) | 技术基准：Java 21、Maven、PostgreSQL、MyBatis Plus、Gateway |
 
 ---
 
@@ -555,14 +556,68 @@
 |----------|------|
 | 核心能力 4.1–4.10 | `00-project-guideline.md` 第三章 |
 | 建设顺序与当前阶段 | `README.md` 第四节、第六节 |
-| 第一阶段任务对齐 | `development-plan.md` 第三章 |
+| 第一阶段任务对齐 | `development-plan.md` 第四章 |
 | 业务系统禁止直连 | `00-project-guideline.md` 2.4、`README.md` 第七节 |
 
 ---
 
-## 十一、关联文档
+## 十一、专项一致性追溯（下游设计对照）
+
+> **全链路映射表（推荐查阅）：** [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md)（功能模块—产品页面—架构—API—表—技术栈，含缺失/冲突/过度设计标记）。
+
+> 2026-05-21 底座专项检查结果：核心能力、管理页面、数据表、接口与任务拆解**已对齐**；按用户限流为第一阶段**延后**（见架构 §15.1 说明）。
+
+### 11.1 核心能力 → 架构模块
+
+| §4 / §7.2 | 能力 | 架构文档 | 状态 |
+|-----------|------|----------|------|
+| 4.1 | 统一 AI 网关 | [architecture](../03-architecture/ai-common-infra-architecture.md) §六.1 AI Gateway | ✅ |
+| 4.2 | 多模型路由 | §六.2 Model Router | ✅ |
+| 4.3 | 模型降级 | §六.9 Degradation Handler | ✅ |
+| 4.4 | 失败追踪 | §六.7 Failure Tracker | ✅ |
+| 4.5 | 重试 | §六.8 Retry Handler | ✅ |
+| 4.6 | Token 与成本 | §六.6 Token & Cost Service | ✅ |
+| 4.7 | 调用日志 | §六.5 Invocation Logger | ✅ |
+| 4.8 | 限流与熔断 | §六.10 Rate Limiter、Circuit Breaker | ✅（按用户限流见 T-028 延后说明） |
+| 4.9 | 成本控制 | §六.10 Cost Guard | ✅ |
+| 4.10 | 可观测 | §六 Admin、§七.3 | ✅ |
+| 4.3～4.5 | Model Client / Adapter | §六.3～6.4 | ✅ |
+
+### 11.2 核心能力 → 开发任务（第一阶段）
+
+| 能力 | 主要任务 |
+|------|----------|
+| 网关 | T-014～T-017、T-033 |
+| 路由 | T-009、T-023 |
+| 降级 / 重试 | T-024～T-026 |
+| 日志 | T-018～T-022、T-034 |
+| Token / 成本 | T-010、T-030～T-031、T-035 |
+| 失败统计 | T-027、T-036 |
+| 限流 / 熔断 / 日成本 | T-028～T-029、T-032 |
+| 管理端 | T-040～T-046 |
+| 验收 | T-050 |
+
+### 11.3 可观测需求 → 产品页面 → API
+
+| 需求 §4.10 | 产品页面 | API |
+|------------|----------|-----|
+| 调用记录列表/详情 | §4.1～4.2 | `GET /admin/invocations`、`GET .../{requestId}` |
+| Token/成本汇总 | §4.3 | `GET /admin/stats/cost` |
+| 失败分布 | §4.4 | `GET /admin/stats/failures` |
+| 模型成功率/耗时/熔断 | §4.5 | `GET /admin/routes`（`health.*`） |
+| 日成本上限 | §4.6 | `GET /admin/quota/daily`（T-039；PUT 可选 T-045） |
+
+---
+
+## 十二、关联文档
 
 | 文档 | 路径 |
 |------|------|
 | 产品设计 | [docs/02-product/ai-common-infra-product.md](../02-product/ai-common-infra-product.md) |
+| 架构设计 | [docs/03-architecture/ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) |
+| 数据库设计 | [docs/05-database/ai-common-infra-database.md](../05-database/ai-common-infra-database.md) |
+| 接口设计 | [docs/06-api/ai-common-infra-api.md](../06-api/ai-common-infra-api.md) |
+| 开发计划 | [docs/04-development/ai-common-infra-development-plan.md](../04-development/ai-common-infra-development-plan.md) |
+| **全链路映射表** | [docs/02-product/ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) |
+| 技术栈 | [docs/03-architecture/technology-stack.md](../03-architecture/technology-stack.md) |
 | 项目总纲 | [docs/00-project-guideline.md](../00-project-guideline.md) |

@@ -96,6 +96,7 @@ ai-practical-portfolio/
 │   │
 │   ├── 02-product/
 │   │   ├── ai-common-infra-product.md
+│   │   ├── ai-common-infra-module-mapping.md
 │   │   ├── xhs-mom-helper-product.md
 │   │   └── smart-job-agent-product.md
 │   │

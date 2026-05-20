@@ -33,6 +33,7 @@
 | 数据库设计 | [ai-common-infra-database.md](../05-database/ai-common-infra-database.md) | 已完成 |
 | 接口设计 | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) | 已完成 |
 | 技术栈 | [technology-stack.md](../03-architecture/technology-stack.md) | 已完成 |
+| 全链路映射表 | [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) | 已完成 |
 | 项目总计划 | [development-plan.md](./development-plan.md) | 阶段目标对齐 |
 
 ### 1.3 编写约束
@@ -53,6 +54,29 @@
 | AC-5 | 可按日期、业务类型、模型汇总 Token/成本 | T-030～T-031、T-043 |
 | AC-6 | 限流或日成本超限时调用方收到明确原因且有日志 | T-028、T-029、T-032 |
 | AC-7 | 不同项目标识在统计中可区分 | T-006、T-031、T-043 |
+
+### 1.6 需求 §7.2 能力 — 任务覆盖（专项一致性）
+
+> 功能—页面—架构—API—表—技术栈六列对照见 [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md)。
+
+| 需求能力（§7.2） | 覆盖任务 | 状态 |
+|------------------|----------|------|
+| 1 统一 AI 网关 | T-014～T-017、T-033 | ✅ |
+| 2 多模型路由 | T-009、T-023 | ✅ |
+| 3 模型降级 | T-025～T-026 | ✅ |
+| 4 调用日志 | T-018～T-022、T-034、T-041～T-042 | ✅ |
+| 5 Token 统计 | T-020、T-030 | ✅ |
+| 6 成本统计 | T-030～T-031、T-035、T-043 | ✅ |
+| 7 失败追踪 | T-007、T-027、T-036、T-044 | ✅ |
+| 8 重试机制 | T-024 | ✅ |
+| 9 基础限流 | T-028（全局+按业务类型；按用户延后） | ✅ |
+| 10 基础熔断 | T-029 | ✅ |
+| 11 基础可观测页面 | T-040～T-046 | ✅ |
+| 日成本上限 subset | T-032、T-039、T-045 | ✅ |
+
+**核心链路无遗漏：** AI Gateway、Model Router、Degradation、Invocation Logger、Token/Cost、Failure Tracker、Retry、Rate Limit、Circuit Breaker、Cost Guard 均在 §二 阶段总览与上表有对应任务。
+
+**第一阶段不做（与需求 §八、§五排除项一致）：** Prompt 管理、动态路由、Agent 编排、RAG/Milvus、多租户计费、复杂告警导出、业务系统功能。
 
 ### 1.5 工程与包结构约定（T-001 后统一）
 
@@ -181,7 +205,7 @@ ai-common-infra/
 | **任务目标** | 实现 Invoke 请求体结构与校验规则 |
 | **任务范围** | `InvokeRequest`：`businessType`、`projectId`、`userId`、`input`、`params`；必填校验；与 API 文档 §5.1 一致 |
 | **本次不做什么** | 不调用供应商；不写响应持久化；不做路由 |
-| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §5.1、需求 §4.1.2 |
+| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §6.1、需求 §4.1.2 |
 | **涉及目录** | `backend/.../gateway/dto/` 或 `api/dto/` |
 | **验收标准** | 1. 缺 `businessType`/`input` 时校验失败<br>2. 字段名与接口文档一致<br>3. 非法请求不进入 Adapter |
 
@@ -194,7 +218,7 @@ ai-common-infra/
 | **任务目标** | 实现 Invoke 响应体结构，含状态与失败子结构 |
 | **任务范围** | `InvokeResponse`：`requestId`、`status`、`output`、`tokens`、`estimatedCost`、`durationMs`、`degraded`、`failure` 等 |
 | **本次不做什么** | 不实现完整编排；不保证每次调用已有真实 Token（可占位） |
-| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §5.1、需求 §4.1.3 |
+| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §6.1、需求 §4.1.3 |
 | **涉及目录** | `backend/.../gateway/dto/` |
 | **验收标准** | 1. `SUCCESS` / `DEGRADED_SUCCESS` / `FAILED` 可表达<br>2. 与 T-004 可组成一次完整调用描述<br>3. 降级成功与普通成功可区分 |
 
@@ -274,7 +298,7 @@ ai-common-infra/
 | **任务目标** | 定义 Adapter 统一入参/出参，与 Gateway 解耦 |
 | **任务范围** | `ProviderAdapter` 接口；统一调用结果（内容、Token、错误语义）；文档说明与架构 Model Client 关系 |
 | **本次不做什么** | 不实现 HTTP 调用；不做路由、日志、重试 |
-| **涉及文档** | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) §5.3～5.4、T-004～T-005 |
+| **涉及文档** | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) §6.3～6.4、T-004～T-005 |
 | **涉及目录** | `backend/.../adapter/` |
 | **验收标准** | 1. Gateway 仅依赖 Adapter 抽象<br>2. 出参可映射到 T-007 失败类型<br>3. 接口文档可供 T-012 实现 |
 
@@ -328,7 +352,7 @@ ai-common-infra/
 | **任务目标** | 打通 `POST /api/v1/ai/invoke` 最小路径（固定单模型） |
 | **任务范围** | Invoke Controller；校验 T-004；固定或默认单模型 → Adapter → T-005 响应；不含路由/重试/降级/持久化 |
 | **本次不做什么** | 不写 `ai_invocation_log`；不做限流、成本检查 |
-| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §5.1、[architecture.md](../03-architecture/ai-common-infra-architecture.md) §6.1 |
+| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §6.1、[architecture.md](../03-architecture/ai-common-infra-architecture.md) §6.1 |
 | **涉及目录** | `backend/.../gateway/` |
 | **验收标准** | 1. 合法请求返回成功语义 + `requestId` + `output` + `durationMs`<br>2. 非法业务类型返回参数类失败<br>3. 调用方不接触供应商 API |
 
@@ -354,7 +378,7 @@ ai-common-infra/
 | **任务目标** | 进入 Adapter 前完成业务类型/项目/输入校验 |
 | **任务范围** | 集成 T-006；未登记类型、空 input 等 → `PARAM_ERROR`；不发起供应商调用 |
 | **本次不做什么** | 不写失败日志表（T-020）；不实现限流 |
-| **涉及文档** | T-004～T-007、[api.md](../06-api/ai-common-infra-api.md) §5.1 HTTP 错误表 |
+| **涉及文档** | T-004～T-007、[api.md](../06-api/ai-common-infra-api.md) §6.1 HTTP 错误表 |
 | **涉及目录** | `backend/.../gateway/` |
 | **验收标准** | 1. 未登记 `businessType` 不调供应商<br>2. 失败信息可读且不泄露配置<br>3. 为 T-020 预留写入点 |
 
@@ -408,7 +432,7 @@ ai-common-infra/
 | **任务目标** | 实现 `GET /api/v1/admin/invocations` |
 | **任务范围** | 筛选：时间、业务类型、项目、状态、降级、失败类型、requestId；分页；可选 `withSummary` |
 | **本次不做什么** | 不做前端页面（T-041）；不做导出 |
-| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §5.2、[product.md](../02-product/ai-common-infra-product.md) §4.1 |
+| **涉及文档** | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) §6.2、[product.md](../02-product/ai-common-infra-product.md) §4.1 |
 | **涉及目录** | `backend/.../admin/` |
 | **验收标准** | 1. 筛选单独与组合可用<br>2. 列表字段与 API 文档一致<br>3. AC-1、AC-4 列表侧可验 |
 
@@ -421,7 +445,7 @@ ai-common-infra/
 | **任务目标** | 实现 `GET /api/v1/admin/invocations/{requestId}` |
 | **任务范围** | 主表详情 + `attempts` 时间线；404 处理 |
 | **本次不做什么** | 不做前端详情页（T-042） |
-| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §5.3、产品 §4.2 |
+| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §6.3、产品 §4.2 |
 | **涉及目录** | `backend/.../admin/` |
 | **验收标准** | 1. 不存在返回 40401<br>2. 降级成功时计划模型≠实际模型<br>3. 产品排查流程 5.1/5.3 数据齐全 |
 
@@ -436,7 +460,7 @@ ai-common-infra/
 | **任务目标** | Gateway 按 `businessType` 选择计划主模型 |
 | **任务范围** | `ModelRouter` 读取 T-009；替换 T-015 固定模型；日志记 `planned_model` |
 | **本次不做什么** | 不实现降级换模；不实现熔断跳过（T-029） |
-| **涉及文档** | [architecture.md](../03-architecture/ai-common-infra-architecture.md) §5.2、需求 §4.2.4 |
+| **涉及文档** | [architecture.md](../03-architecture/ai-common-infra-architecture.md) §6.2、需求 §4.2.4 |
 | **涉及目录** | `backend/.../router/`、`gateway/` |
 | **验收标准** | 1. 至少 2 种业务类型命中不同模型<br>2. 未配置路由拒绝调用<br>3. 日志含计划模型 |
 
@@ -451,7 +475,7 @@ ai-common-infra/
 | **任务目标** | 对 transient 错误在同模型上有限次重试 |
 | **任务范围** | `RetryHandler`；次数/退避可配置；写 `ai_invocation_attempt`（RETRY）；更新 `retry_count` |
 | **本次不做什么** | 不换模型（非降级）；认证/参数错误不重试 |
-| **涉及文档** | 需求 §4.5、[architecture.md](../03-architecture/ai-common-infra-architecture.md) §5.8 |
+| **涉及文档** | 需求 §4.5、[architecture.md](../03-architecture/ai-common-infra-architecture.md) §6.8 |
 | **涉及目录** | `backend/.../resilience/`、`adapter/` |
 | **验收标准** | 1. 认证错误 0 重试<br>2. 模拟超时重试次数≤配置<br>3. 无无限重试 |
 
@@ -492,7 +516,7 @@ ai-common-infra/
 | **任务目标** | 实现 `GET /api/v1/admin/stats/failures` |
 | **任务范围** | 失败率、按类型/模型/业务类型分布；`recentFailures` |
 | **本次不做什么** | 不做告警推送；不做前端页（T-044） |
-| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §5.5、产品 §4.4、AC-4 |
+| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §6.5、产品 §4.4、AC-4 |
 | **涉及目录** | `backend/.../admin/` |
 | **验收标准** | 1. AC-4 数据正确<br>2. 占比合理<br>3. 可钻取到日志列表（Query 预填） |
 
@@ -520,7 +544,7 @@ ai-common-infra/
 | **任务目标** | 实现 `GET /api/v1/admin/stats/cost` |
 | **任务范围** | 按日期 + `groupBy`（project/businessType/model）；overview + breakdown + dailyTrend |
 | **本次不做什么** | 不建 `ai_stats_daily` 预聚合表（除非性能不达标）；不做 PDF 导出 |
-| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §5.4、需求 §4.6.2、AC-5/AC-7 |
+| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §6.4、需求 §4.6.2、AC-5/AC-7 |
 | **涉及目录** | `backend/.../admin/` |
 | **验收标准** | 1. AC-5、AC-7 通过<br>2. 三维度可解释<br>3. 产品 5.2 钻取可用 |
 
@@ -548,7 +572,7 @@ ai-common-infra/
 | **任务目标** | 模型连续失败时暂停转发，优先备用或跳过 |
 | **任务范围** | 内存熔断状态 + 冷却；Router 跳过熔断主模型；Admin 查询熔断状态（可合入 T-046） |
 | **本次不做什么** | 不用 Redis 分布式熔断；不自动改路由配置 |
-| **涉及文档** | 需求 §4.8.2、[architecture.md](../03-architecture/ai-common-infra-architecture.md) §5.10 |
+| **涉及文档** | 需求 §4.8.2、[architecture.md](../03-architecture/ai-common-infra-architecture.md) §6.10 |
 | **涉及目录** | `backend/.../resilience/`、`router/` |
 | **验收标准** | 1. 可模拟触发并观察状态<br>2. 熔断模型不作为新请求主模型<br>3. T-046 可展示 |
 
@@ -630,7 +654,7 @@ ai-common-infra/
 | **任务目标** | 实现 `GET /api/v1/admin/models` |
 | **任务范围** | 模型 + 供应商 + 单价只读列表；`enabledOnly` |
 | **本次不做什么** | 不做模型 CRUD 写接口 |
-| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §5.6 |
+| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §6.6 |
 | **涉及目录** | `admin/` |
 | **验收标准** | 1. 字段与 API 文档一致<br>2. 不返回密钥 |
 
@@ -643,7 +667,7 @@ ai-common-infra/
 | **任务目标** | 实现 `GET /api/v1/admin/routes` |
 | **任务范围** | 路由 + 备用 + 可选 `health`；`enabledOnly` |
 | **本次不做什么** | 不做路由写接口、拖拽配置 |
-| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §5.7、产品 §4.5 |
+| **涉及文档** | [api.md](../06-api/ai-common-infra-api.md) §6.7、产品 §4.5 |
 | **涉及目录** | `admin/`、`router/` |
 | **验收标准** | 1. 主备关系可见<br>2. 熔断状态可展示（若已实现） |
 
@@ -684,7 +708,7 @@ ai-common-infra/
 | **任务目标** | 交付产品 §4.1 列表页 |
 | **任务范围** | 对接 T-021；筛选、分页、复制 requestId；可选汇总条 |
 | **本次不做什么** | 不做导出、实时推送 |
-| **涉及文档** | 产品 §4.1、[api.md](../06-api/ai-common-infra-api.md) §5.2 |
+| **涉及文档** | 产品 §4.1、[api.md](../06-api/ai-common-infra-api.md) §6.2 |
 | **涉及目录** | `frontend/src/views/invocations/` |
 | **验收标准** | 1. 同 T-034<br>2. 符合产品第一阶段不做项 |
 
@@ -850,3 +874,4 @@ T-028    T-029    T-032
 |------|------|------|
 | 2026.v1 | 2026-05-20 | 初版 T-001～T-050 |
 | 2026.v2 | 2026-05-21 | 对齐上游设计文档；每任务增加「本次不做什么」「涉及文档」「涉及目录」；补充 T-037～T-039；锁定 Java21+MyBatis Plus |
+| 2026.v2.1 | 2026-05-21 | 专项一致性：§1.6 需求能力任务覆盖表 |

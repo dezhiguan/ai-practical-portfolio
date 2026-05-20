@@ -23,7 +23,7 @@
 | 项 | 内容 |
 |----|------|
 | **文档名称** | `docs/06-api/ai-common-infra-api.md` |
-| **设计范围** | 7 类核心接口 + 通用约定与错误码；第一阶段只读管理接口为主 |
+| **设计范围** | 8 类核心接口 + 通用约定与错误码；第一阶段以只读管理接口为主 |
 | **涉及页面/能力** | 产品：调用日志列表/详情、Token 成本统计、失败统计、模型路由与状态 |
 | **涉及数据表** | `ai_invocation_log`、`ai_invocation_attempt`、`ai_model`、`ai_model_pricing`、`ai_model_provider`、`ai_route_rule`、`ai_route_fallback`、`ai_business_type` |
 | **是否涉及 AI 调用** | 是：`POST /api/v1/ai/invoke` 为唯一大模型调用入口 |
@@ -43,10 +43,26 @@
 | [ai-common-infra-product.md](../02-product/ai-common-infra-product.md) | 筛选字段、详情信息块 |
 | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) | Gateway 边界、调用链 |
 | [ai-common-infra-database.md](../05-database/ai-common-infra-database.md) | 字段与表映射 |
+| [technology-stack.md](../03-architecture/technology-stack.md) | 后端 Java 21 + Spring Boot 3 + Maven；接口经 Gateway |
 
 ---
 
-## 二、调用关系与约束
+## 二、技术实现与接口风格
+
+| 项 | 约定 |
+|----|------|
+| 实现框架 | Spring Boot 3.x + Spring Web（REST Controller） |
+| 构建 | Maven（`pom.xml`）；**禁止** Gradle |
+| 参数校验 | Spring Validation（`@Valid` 等） |
+| 路径风格 | `/api/v1/{资源}`；管理端 `/api/v1/admin/*` |
+| HTTP 方法 | GET 查询、POST 提交（Invoke 与写操作） |
+| 响应体 | 统一 `code` / `message` / `data` JSON 结构（§3.2） |
+| 错误 | HTTP 状态码 + 业务 `code`；见本文档错误码章节 |
+| AI 调用 | 仅 `POST /api/v1/ai/invoke`；供应商 API **仅底座内部** HTTP 客户端调用 |
+
+---
+
+## 三、调用关系与约束
 
 ### 2.1 谁调用谁
 
@@ -74,11 +90,11 @@
 | 禁止前端直连大模型 | 任何浏览器/移动端不得调用 OpenAI 等供应商 URL |
 | 禁止业务前端直连底座 Invoke | 业务前端只调各自 `xhs-mom-helper` / `smart-job-agent` 后端；由业务后端再调 `POST /api/v1/ai/invoke` |
 | 禁止业务后端直连供应商 | 必须通过底座 Invoke 接口 |
-| 管理端可调 Admin API | 管理端只读查询 + 少量配置（日成本上限见 §八附录，第一阶段可选） |
+| 管理端可调 Admin API | 管理端只读查询 + 日成本查询（`GET /admin/quota/daily`）；`PUT` 同路径可选 |
 
 ---
 
-## 三、通用约定
+## 四、通用约定
 
 ### 3.1 基础信息
 
@@ -114,7 +130,7 @@
 
 | 字段 | 说明 |
 |------|------|
-| `code` | `0` 表示成功；非 0 为业务/系统错误码（见 §七） |
+| `code` | `0` 表示成功；非 0 为业务/系统错误码（见 §九） |
 | `message` | 给人可读简述 |
 | `data` | 成功时为业务数据；失败时为 `null` 或补充结构 |
 
@@ -165,7 +181,7 @@
 
 ---
 
-## 四、接口清单
+## 五、接口清单
 
 | 序号 | 方法 | 路径 | 用途 | 调用方 |
 |------|------|------|------|--------|
@@ -176,12 +192,15 @@
 | 5 | GET | `/api/v1/admin/stats/failures` | 失败原因统计 | 管理端 |
 | 6 | GET | `/api/v1/admin/models` | 模型配置查询 | 管理端 |
 | 7 | GET | `/api/v1/admin/routes` | 模型路由配置查询 | 管理端 |
+| 8 | GET | `/api/v1/admin/quota/daily` | 日成本上限与已用占比（系统设置） | 管理端 |
+
+**可选（第一阶段 P1）：** `PUT /api/v1/admin/quota/daily` 修改日上限（T-045）；见 §九.3。
 
 ---
 
-## 五、接口详细设计
+## 六、接口详细设计
 
-### 5.1 统一 AI 调用
+### 6.1 统一 AI 调用
 
 #### 基本信息
 
@@ -290,7 +309,7 @@
 
 ---
 
-### 5.2 调用日志列表查询
+### 6.2 调用日志列表查询
 
 #### 基本信息
 
@@ -363,7 +382,7 @@
 
 ---
 
-### 5.3 调用日志详情查询
+### 6.3 调用日志详情查询
 
 #### 基本信息
 
@@ -428,7 +447,7 @@
 
 ---
 
-### 5.4 Token 与成本统计
+### 6.4 Token 与成本统计
 
 #### 基本信息
 
@@ -502,7 +521,7 @@
 
 ---
 
-### 5.5 失败原因统计
+### 6.5 失败原因统计
 
 #### 基本信息
 
@@ -561,7 +580,7 @@
 
 ---
 
-### 5.6 模型配置查询
+### 6.6 模型配置查询
 
 #### 基本信息
 
@@ -612,7 +631,7 @@
 
 ---
 
-### 5.7 模型路由配置查询
+### 6.7 模型路由配置查询
 
 #### 基本信息
 
@@ -662,7 +681,23 @@
 
 ---
 
-## 六、接口与产品页面对照
+## 七、需求与架构追溯
+
+> **完整映射表（含产品页面、表、技术栈）：** [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md)。
+
+| 接口 | 需求 | 架构模块 | 主要表 |
+|------|------|----------|--------|
+| `POST /ai/invoke` | §4.1～4.9 | AI Gateway 编排链 | `ai_invocation_log`、`ai_invocation_attempt`、路由/配额表 |
+| `GET /admin/invocations*` | §4.7、§4.10 | Invocation Logger、Admin | `ai_invocation_log` |
+| `GET /admin/stats/cost` | §4.6、§4.10 | Token & Cost | `ai_invocation_log` 聚合 |
+| `GET /admin/stats/failures` | §4.4、§4.10 | Failure Tracker | `ai_invocation_log` 聚合 |
+| `GET /admin/models` | §4.6、§4.10 | Config Registry | `ai_model*` |
+| `GET /admin/routes` | §4.2、§4.3、§4.8 | Router、Circuit Breaker | `ai_route_*` |
+| `GET /admin/quota/daily` | §4.9、§7.3 | Cost Guard | `ai_quota_*` |
+
+---
+
+## 八、接口与产品页面对照
 
 | 产品页面 | 接口 |
 |----------|------|
@@ -670,14 +705,16 @@
 | 调用日志详情 | `GET /admin/invocations/{requestId}` |
 | Token 与成本统计 | `GET /admin/stats/cost` |
 | 失败统计 | `GET /admin/stats/failures` |
-| 模型路由与状态 | `GET /admin/routes` + `GET /admin/models`（模型健康） |
+| 模型路由与状态 | `GET /admin/routes`（`health` 含成功率/耗时/熔断） |
 | 系统设置-单价参考 | `GET /admin/models` |
+| 系统设置-日成本上限 | `GET /admin/quota/daily`；可选 `PUT` 同路径 |
+| 系统设置-限流说明 | 配置文档 + `application.yml`（无独立 REST） |
 
 **钻取：** 统计页 `breakdown[].dimensionKey` → 打开日志列表时带对应 Query（`businessType` / `projectId` / `failureType`）。
 
 ---
 
-## 七、错误码汇总
+## 九、错误码汇总
 
 | code | HTTP | 说明 |
 |------|------|------|
@@ -699,15 +736,15 @@
 
 ---
 
-## 八、第一阶段范围说明
+## 十、第一阶段范围说明
 
-### 8.1 本阶段包含
+### 10.1 本阶段包含
 
-- 上述 7 个核心接口的语义与字段
+- 上述 **8** 个核心接口的语义与字段（含 `GET /admin/quota/daily`）
 - 业务后端 → Invoke 的唯一 AI 通路
 - 管理端只读查询（模型、路由、日志、统计）
 
-### 8.2 本阶段不包含（后续扩展）
+### 10.2 本阶段不包含（后续扩展）
 
 | 接口 | 说明 |
 |------|------|
@@ -718,7 +755,7 @@
 | 批量调用、异步任务查询 | Agent 长任务 |
 | 报表导出 | PDF/Excel |
 
-### 8.3 附录：日成本上限（可选，T-045）
+### 10.3 附录：`PUT` 日成本上限（可选，T-045）
 
 若管理端需在线修改日成本上限，可增补：
 
@@ -731,34 +768,38 @@
 
 ---
 
-## 九、与开发任务映射
+## 十一、与开发任务映射
 
 | 任务 | 接口 |
 |------|------|
-| T-004、T-005 | §5.1 请求/响应字段 |
-| T-015、T-033 | §5.1 |
-| T-021 | §5.2 |
-| T-022 | §5.3 |
-| T-031、T-035 | §5.4 |
-| T-027、T-036、T-041 | §5.5 |
-| T-008、T-010 | §5.6 |
-| T-009、T-023、T-044 | §5.7 |
+| T-004、T-005 | §6.1 请求/响应字段 |
+| T-015、T-033 | §6.1 |
+| T-021 | §6.2 |
+| T-022 | §6.3 |
+| T-031、T-035 | §6.4 |
+| T-027、T-036、T-041 | §6.5 |
+| T-008、T-010 | §6.6 |
+| T-009、T-023、T-044 | §6.7 |
+| T-039、T-045 | §清单 #8、`§10.3` PUT（可选） |
 | T-034～T-046 | Admin 各接口对接管理端 |
 
 ---
 
-## 十、关联文档
+## 十二、关联文档
 
 | 文档 | 路径 |
 |------|------|
 | 数据库设计 | [ai-common-infra-database.md](../05-database/ai-common-infra-database.md) |
 | 架构设计 | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) |
 | 开发计划 | [ai-common-infra-development-plan.md](../04-development/ai-common-infra-development-plan.md) |
+| 全链路映射表 | [ai-common-infra-module-mapping.md](../02-product/ai-common-infra-module-mapping.md) |
 
 ---
 
-## 十一、文档版本记录
+## 十三、文档版本记录
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | 2026.v1 | 2026-05-21 | 初版：7 核心接口 + 通用约定与错误码 |
+| 2026.v1.1 | 2026-05-21 | 新增 §二 技术实现与接口风格；章节重编号；对齐 technology-stack |
+| 2026.v1.2 | 2026-05-21 | 专项一致性：8 接口含 quota/daily；§七 追溯矩阵；产品/需求对照补全 |
