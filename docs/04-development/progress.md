@@ -6,7 +6,7 @@
 第一阶段：通用 AI 技术底座
 ```
 
-**整体状态：** 文档体系与目录骨架已就绪；架构正文与编码均未开始。
+**整体状态：** 文档体系与目录骨架已就绪；底座架构正文已完成；编码未开始。
 
 ---
 
@@ -16,7 +16,7 @@
 通用 AI 技术底座（ai-common-infra）
 ```
 
-**当前焦点：** 充实架构文档正文 → 在 `ai-common-infra/backend/` 执行 T-001。
+**当前焦点：** 在 `ai-common-infra/backend/` 执行 T-001（工程骨架初始化）。
 
 ---
 
@@ -63,10 +63,16 @@ docs/04-development/      → frontend/backend-development-guide 占位
 已对 README、guideline、底座需求/产品、两份开发计划做比对。
 
 - 阶段顺序、第一阶段边界、不做项、业务隔离：**一致**
-- 架构：**占位文件已存在，正文待写**
+- 架构：**底座架构正文已完成**（`ai-common-infra-architecture.md`）；两业务架构仍为占位
 - 可选后续：README/guideline 第一阶段清单与需求 7.2 完全对齐；guideline 失败类型补「参数错误」
 
-### 3.6 开发过程文档
+### 3.6 架构设计（2026-05-21）
+
+- [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) 正文已完成
+- 覆盖：架构目标、模块边界、调用链路、核心组件职责、业务复用、第一阶段范围、T-xxx 映射
+- 未包含：数据库表结构、接口细节、代码实现
+
+### 3.7 开发过程文档
 
 持续维护：`progress.md`、`decision-log.md`、`ai-handoff.md`、`task-board.md`
 
@@ -77,8 +83,7 @@ docs/04-development/      → frontend/backend-development-guide 占位
 | 项 | 状态 |
 |----|------|
 | 底座编码（T-001～T-050） | 未开始 |
-| `ai-common-infra-architecture.md` 正文 | 占位已建，**待编写** |
-| `backend-development-guide.md` / `frontend-development-guide.md` | 占位已建，待编写 |
+| `backend-development-guide.md` / `frontend-development-guide.md` | 占位已建，待编写（可与 T-002～T-003 同步） |
 | 两业务架构正文 | 占位已建，第二阶段/第三阶段前再写 |
 
 当前无「进行中」编码或文档编写任务（会话间隙）。
@@ -87,15 +92,15 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 ## 五、下一步任务
 
-### 优先级 1：文档
+### 优先级 1：工程
 
-1. 充实 [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md)（模块划分、调用链、与需求 4.x 及 T-xxx 对照）
-2. 可选：充实 [backend-development-guide.md](./backend-development-guide.md)（与 T-002、T-003 同步）
+1. 执行 **T-001**：在 `ai-common-infra/backend/` 初始化可构建的工程骨架
+2. 单次会话只完成一个 T-xxx，完成后更新本目录下四份过程文档
 
-### 优先级 2：工程
+### 优先级 2：文档（与编码并行）
 
-3. 执行 **T-001**：在 `ai-common-infra/backend/` 初始化可构建的工程骨架
-4. 单次会话只完成一个 T-xxx，完成后更新本目录下四份过程文档
+3. 可选：充实 [backend-development-guide.md](./backend-development-guide.md)（与 T-002、T-003 同步）
+4. T-018 前补充 `docs/05-database/` 底座库表说明
 
 ### 优先级 3：可选文档维护
 
@@ -124,4 +129,4 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 ## 八、最近更新时间
 
-2026-05-20
+2026-05-21

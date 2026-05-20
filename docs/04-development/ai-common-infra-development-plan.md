@@ -20,7 +20,7 @@
 |------|------|------|
 | 需求说明 | [docs/01-requirements/ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) | 已完成 |
 | 产品设计 | [docs/02-product/ai-common-infra-product.md](../02-product/ai-common-infra-product.md) | 已完成 |
-| 架构设计 | [docs/03-architecture/](../03-architecture/) | **待补充**；本计划按需求/产品中的逻辑模块拆分，架构文档落地后需与本计划任务编号对齐 |
+| 架构设计 | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) | **已完成**；本计划任务编号已与架构 §八 映射对齐 |
 | 项目总开发计划 | [development-plan.md](./development-plan.md) | 阶段目标对齐 |
 
 ### 1.3 编写约束

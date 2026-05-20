@@ -23,7 +23,6 @@
 
 | 任务 | 备注 |
 |------|------|
-| [ ] 充实 `ai-common-infra-architecture.md` 正文 | 占位已有 |
 | [ ] 充实 `backend-development-guide.md` 正文 | 可与 T-002～T-003 同步 |
 
 ### P0 工程
@@ -80,6 +79,7 @@
 - [x] `xhs-mom-helper/{backend,frontend}/` 占位
 - [x] `smart-job-agent/{backend,frontend}/` 占位
 - [x] 三份 `docs/03-architecture/*-architecture.md` 占位
+- [x] `ai-common-infra-architecture.md` 正文（模块边界、调用链、组件职责、阶段范围、T-xxx 映射）
 - [x] `frontend-development-guide.md`、`backend-development-guide.md` 占位
 - [x] README 第三节目录树更新
 
@@ -96,12 +96,12 @@
 
 ## 六、下一步 Top 3
 
-1. 充实 `docs/03-architecture/ai-common-infra-architecture.md`  
-2. 执行 **T-001**（`ai-common-infra/backend/`）  
-3. 更新 progress、ai-handoff、本看板（标注当前 T 或文档状态）
+1. 执行 **T-001**（`ai-common-infra/backend/` 工程骨架）  
+2. 可选：充实 `backend-development-guide.md`（T-002～T-003）  
+3. 完成后更新 progress、ai-handoff、本看板
 
 ---
 
 ## 七、最近更新时间
 
-2026-05-20
+2026-05-21
