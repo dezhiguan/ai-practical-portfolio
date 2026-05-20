@@ -22,6 +22,7 @@
 | 产品设计 | [docs/02-product/ai-common-infra-product.md](../02-product/ai-common-infra-product.md) | 已完成 |
 | 架构设计 | [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md) | **已完成**；本计划任务编号已与架构 §八 映射对齐 |
 | 数据库设计 | [ai-common-infra-database.md](../05-database/ai-common-infra-database.md) | **已完成**；T-018 字段集与表结构以此为准 |
+| 接口设计 | [ai-common-infra-api.md](../06-api/ai-common-infra-api.md) | **已完成**；T-004～T-005、T-021～T-022、T-031、T-034～T-036 以此为准 |
 | 项目总开发计划 | [development-plan.md](./development-plan.md) | 阶段目标对齐 |
 
 ### 1.3 编写约束
