@@ -8,174 +8,125 @@ ai-practical-portfolio
 
 ---
 
-## 二、当前阶段
-
-当前处于：
+## 二、当前阶段与进度一句话
 
 ```text
 第一阶段：通用 AI 技术底座
+文档与 0→1 开发计划已就绪 → 缺架构专文 → 下一步：写架构或执行 T-001
+编码：未开始
 ```
 
-当前正在推进：
+---
+
+## 三、项目组成（不变）
+
+1. 通用 AI 技术底座（**当前**）
+2. 小红书内容运营工作台（仅文档，未开发）
+3. 智能求职 Agent 工作台（仅文档，未开发）
+
+---
+
+## 四、已完成（本次及近期会话）
+
+| 类别 | 内容 |
+|------|------|
+| 需求 | 底座 + 两业务轻量需求（`docs/01-requirements/`） |
+| 产品 | 底座 + 两业务轻量产品（`docs/02-product/`） |
+| 开发计划 | [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md)（T-001～T-050） |
+| 检查 | 7 份文档一致性比对（结论：整体一致，架构文件缺失） |
+| 过程文档 | progress / decision-log / task-board / 本文件 持续更新 |
+
+**尚未完成：**
+
+- `docs/03-architecture/ai-common-infra-architecture.md`
+- 任意 T-xxx 编码任务
+
+---
+
+## 五、底座第一阶段边界（必记）
+
+**做：** 统一网关、路由、降级、调用日志、Token/成本统计、失败追踪、重试、限流、熔断、管理端可观测（日志/成本/失败/设置）、日成本上限 subset。
+
+**不做：** Prompt 管理、动态路由、Agent 编排、RAG、多租户计费、业务系统功能、复杂告警导出。
+
+**验收：** 需求文档 AC-1～AC-7。
+
+---
+
+## 六、开发计划执行入口
+
+主文档：[ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md)
+
+推荐下一编号（二选一）：
+
+| 选项 | 任务 | 说明 |
+|------|------|------|
+| A（建议） | 先写架构文档 | 再 T-001，减少返工 |
+| B | **T-001** | 模块工程骨架初始化，不依赖架构全文但需后续补齐 |
+
+依赖链摘要：
 
 ```text
-项目基础结构与文档体系初始化
+T-001 → T-002 → T-003 → T-004～010 → T-011～013 → T-014～017
+→ T-018～022 → T-023 → T-024～026 → T-027 / T-030～031
+→ T-028、029、032 → T-033 → T-034～036 → T-040～046 → T-050
 ```
 
 ---
 
-## 三、项目总体组成
+## 七、关键约束
 
-项目包含三个部分：
-
-1. 通用 AI 技术底座
-2. 小红书内容运营工作台
-3. 智能求职 Agent 工作台
-
----
-
-## 四、当前已完成内容
-
-已完成以下事项：
-
-1. 确定项目整体目录结构
-2. 确定文档目录结构
-3. 生成项目入口文档
-4. 生成项目指导性大纲
-5. 生成开发计划
-6. 生成进度记录文档
-7. 生成决策日志文档
-8. 生成上下文交接文档
-9. 生成任务看板文档
+- 所有 AI 调用经统一网关，业务不得直连模型 API  
+- 不做自动发布/投递/抓取/回复 HR  
+- 模式：`AI 辅助 + 人工确认`  
+- 业务类型/项目 ID 在 T-006 登记仅为路由与统计**预留**，不等于开发小红书/求职 Agent  
 
 ---
 
-## 五、当前核心上下文
+## 八、下一次会话建议步骤
 
-### 5.1 通用 AI 技术底座
-
-通用 AI 技术底座用于为两个业务系统提供公共 AI 基础能力。
-
-核心能力包括：
-
-1. 统一 AI 网关
-2. 多模型路由
-3. 模型降级
-4. AI 调用日志
-5. Token 成本统计
-6. 调用失败追踪
-7. 重试机制
-8. 限流与熔断
-9. 基础可观测能力
+1. 读本文 + [progress.md](./progress.md) + [task-board.md](./task-board.md)  
+2. 读 [ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md) 第七章、第八章  
+3. 读 [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md) 第二节总览与即将执行的 T-xxx  
+4. 若写架构：对照需求第 4 章与开发计划「逻辑模块」表  
+5. 若写代码：只认领 **一个** T-xxx，完成后更新 progress、task-board、本文件  
 
 ---
 
-### 5.2 小红书内容运营工作台
+## 九、优先阅读清单
 
-小红书内容运营工作台用于辅助内容创作者完成内容运营流程。
+### 必读（恢复上下文）
 
-核心流程包括：
+1. [ai-handoff.md](./ai-handoff.md)（本文件）  
+2. [progress.md](./progress.md)  
+3. [task-board.md](./task-board.md)  
 
-1. 上传素材
-2. 管理素材
-3. 生成标题、正文和标签
-4. 保存草稿
-5. 加入内容日历
-6. 导出发布包
-7. 人工发布
-8. 录入发布数据
-9. 生成内容复盘建议
+### 必读（底座开发）
 
----
+4. [ai-common-infra-requirements.md](../01-requirements/ai-common-infra-requirements.md)  
+5. [ai-common-infra-product.md](../02-product/ai-common-infra-product.md)  
+6. [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md)  
 
-### 5.3 智能求职 Agent 工作台
+### 按需
 
-智能求职 Agent 工作台用于辅助个人完成求职与职业成长相关流程。
+7. [development-plan.md](./development-plan.md)（全项目阶段）  
+8. [decision-log.md](./decision-log.md)  
+9. [README.md](../../README.md)、[00-project-guideline.md](../00-project-guideline.md)  
 
-核心流程包括：
+### 待编写
 
-1. 上传个人职业资料
-2. 建立个人知识库
-3. 导入岗位信息
-4. 分析岗位要求
-5. 匹配个人经历
-6. 生成差距分析
-7. 生成求职沟通内容
-8. 生成面试准备内容
-9. 管理投递状态
+- `docs/03-architecture/ai-common-infra-architecture.md`  
 
 ---
 
-## 六、关键边界
+## 十、待用户/后续决策（非阻塞可先默认）
 
-当前阶段不做以下能力：
-
-1. 小红书自动发布
-2. 小红书自动登录
-3. 小红书自动抓取
-4. 招聘网站自动登录
-5. 招聘网站自动投递
-6. 自动回复 HR
-7. 绕过验证码、风控、平台限制的功能
-
-项目采用：
-
-```text
-AI 辅助 + 人工确认
-```
+1. 第一阶段是否做「按用户限流」（T-028 当前仅全局+业务类型）  
+2. 首个大模型供应商选型（影响 T-008、T-012）  
+3. 技术栈细节（guideline 写 Java，实施前确认版本）  
 
 ---
 
-## 七、下一步建议
-
-下一步应继续推进第一阶段。
-
-建议优先完成：
-
-1. 初始化项目根目录
-2. 初始化 `docs` 文档目录
-3. 初始化 `ai-common-infra` 目录
-4. 初始化 `xhs-mom-helper` 目录
-5. 初始化 `smart-job-agent` 目录
-6. 开始规划通用 AI 技术底座的第一批能力
-
-第一批能力包括：
-
-1. 统一返回结构
-2. 统一异常处理
-3. 请求追踪标识
-4. AI 网关基础入口
-5. 模型路由基础规则
-6. AI 调用日志结构
-7. Token 成本统计结构
-
----
-
-## 八、继续推进时的注意事项
-
-1. 不要跳过通用 AI 技术底座直接开发业务功能
-2. 不要把业务模块直接绑定具体模型接口
-3. 不要实现高风险自动化功能
-4. 每完成一个阶段，需要更新开发进度文档
-5. 重要技术选择必须记录到决策日志
-6. 中断前需要更新上下文交接文档和任务看板
-
----
-
-## 九、需要优先阅读的文件
-
-继续推进前，应优先阅读：
-
-1. `README.md`
-2. `docs/00-project-guideline.md`
-3. `docs/04-development/development-plan.md`
-4. `docs/04-development/progress.md`
-5. `docs/04-development/decision-log.md`
-6. `docs/04-development/ai-handoff.md`
-7. `docs/04-development/task-board.md`
-
----
-
-## 十、最近更新时间
+## 十一、最近更新时间
 
 2026-05-20
