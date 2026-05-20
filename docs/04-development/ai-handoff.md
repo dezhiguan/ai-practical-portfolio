@@ -4,7 +4,7 @@
 
 ```text
 第一阶段 · 通用 AI 技术底座
-✅ 需求/产品/架构/库表/接口/技术栈文档
+✅ 需求/产品/架构/库表/接口/技术栈/开发计划 v2 / 全局文档一致性修订
 ⏳ T-001 编码（工程骨架）
 ❌ 未写任何业务代码
 ```
@@ -16,83 +16,52 @@
 - **仓库：** `ai-practical-portfolio`
 - **当前：** 全项目第一阶段 = 通用 AI 技术底座
 - **工程路径：** `ai-common-infra/backend/`
+- **任务清单：** [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md)（**2026.v2**，T-001～T-050）
+- **技术基准：** [technology-stack.md](../03-architecture/technology-stack.md)
 
 ---
 
 ## 三、本次会话已完成
 
-1. **全项目技术栈说明** — [technology-stack.md](../03-architecture/technology-stack.md)  
-   - 整体/后端/前端/DB/缓存/文件/AI/RAG/Agent  
-   - 分阶段必须 vs 扩展；关键技术选型原因  
-2. **过程文档** 更新：progress、decision-log、task-board、本文件
+1. **全局文档一致性修订**（README、guideline、progress、decision-log、ai-handoff）
+2. 对齐技术栈：PostgreSQL、Maven、pnpm、React；前端不直连大模型；业务后端经底座 Invoke
 
 ---
 
-## 四、技术栈速记（T-001 用）
+## 四、下一次会话：建议做什么
 
-| 类别 | 第一阶段 |
-|------|----------|
-| 后端 | Java 17、Spring Boot 3、MySQL 8、Flyway/Liquibase |
-| AI | 自研 Gateway、WebClient/OkHttp Adapter、同步 Invoke |
-| 缓存 | Caffeine（不用 Redis） |
-| 前端 | 管理端 Vue3 可延后；Invoke/Admin API 先通 |
-| 不用 | Spring AI、RAG、Agent 框架、MQ、Spring Cloud |
+**执行 T-001**（见开发计划 §三 阶段 A）
 
-待 T-001 锁定：JPA vs MyBatis-Plus、Maven vs Gradle、首个模型厂商。
-
----
-
-## 五、下一次会话：建议做什么
-
-**推荐：执行 T-001**
-
-| 项 | 说明 |
+| 项 | 内容 |
 |----|------|
-| 任务 | 模块工程骨架初始化 |
-| 参考 | [technology-stack.md](../03-architecture/technology-stack.md) §3、§7.1 |
-| 产出 | 可构建空 Spring Boot 工程 + MySQL 连接占位 + 包结构对齐架构模块 |
+| 技术栈 | Java 21、Spring Boot 3、**Maven**、MyBatis Plus、Flyway、**PostgreSQL** |
+| 目录 | `ai-common-infra/backend/` 包结构见开发计划 §1.5 |
+| 验收 | 可构建、可空启动、健康检查 |
+
+完成后更新 task-board 勾选 T-001，并更新本文件当前 T 编号为 **T-002**。
 
 ---
 
-## 六、恢复上下文：阅读顺序
+## 五、恢复上下文：阅读顺序
 
-1. 本文件 → [progress.md](./progress.md) → [task-board.md](./task-board.md)  
-2. [technology-stack.md](../03-architecture/technology-stack.md)  
-3. [ai-common-infra-architecture.md](../03-architecture/ai-common-infra-architecture.md)  
-4. [ai-common-infra-api.md](../06-api/ai-common-infra-api.md)  
-5. [ai-common-infra-database.md](../05-database/ai-common-infra-database.md)  
-6. [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md) — T-001  
-
----
-
-## 七、关键约束（必守）
-
-- Java 17 + Spring Boot 3；主库 MySQL 8  
-- 不自建第二套 LLM 客户端在业务/底座重复实现  
-- 第一阶段不引入 Redis、向量库、Agent 框架  
+1. 本文件 → [progress.md](./progress.md) → [task-board.md](./task-board.md)
+2. [technology-stack.md](../03-architecture/technology-stack.md)
+3. [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md)（当前 T-xxx）
+4. [ai-common-infra-api.md](../06-api/ai-common-infra-api.md)
+5. [ai-common-infra-database.md](../05-database/ai-common-infra-database.md)
+6. [ai-command-templates.md](./ai-command-templates.md)
 
 ---
 
-## 八、文档速查
+## 六、关键约束
 
-```text
-docs/03-architecture/technology-stack.md  ← 技术栈 ✅
-docs/06-api/ai-common-infra-api.md
-docs/05-database/ai-common-infra-database.md
-ai-common-infra/backend/                   ← T-001
-```
+- 单次会话 **1 个 T 编号**
+- 不做 xhs / smart-job-agent 业务功能
+- 所有 LLM 经 `POST /api/v1/ai/invoke`（业务后端调用，前端禁止直连）
+- 主库 **PostgreSQL**；后端 **Maven**；前端 **pnpm**（业务阶段）
 
 ---
 
-## 九、待决策（T-001 写入 decision-log）
-
-1. JPA vs MyBatis-Plus  
-2. Maven vs Gradle  
-3. 管理端：独立 frontend 或 static  
-4. 首个大模型供应商（OpenAI 兼容优先）  
-
----
-
-## 十、最近更新时间
+## 七、最近更新时间
 
 2026-05-21

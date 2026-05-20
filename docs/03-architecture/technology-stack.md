@@ -90,6 +90,8 @@
 | 容器化 | Docker | 第一阶段 | 本地和服务部署 |
 | 编排 | Docker Compose | 第一阶段 | PostgreSQL、Redis、后端服务编排 |
 | 反向代理 | Nginx | 部署阶段 | HTTPS、前端静态资源、后端代理 |
+| 后端构建工具 | Maven | 第一阶段 | 管理 Spring Boot 后端依赖、插件和多模块构建 |
+| 前端包管理工具 | pnpm | 第二阶段起 | 管理前端依赖和构建脚本 |
 
 ---
 

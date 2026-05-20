@@ -150,9 +150,11 @@
 
 ## 2026-05-21：全项目技术栈基线
 
-**决策：** 后端统一 **Java 17 + Spring Boot 3.x + MySQL 8**；前端统一 **Vue 3 + TypeScript + Vite + Element Plus**（分阶段建设）；AI 采用**自研 Gateway + HTTP Provider Adapter**，第一阶段不引入 Spring AI / Agent 框架 / Redis / RAG。
+**决策：** 技术选型以 [technology-stack.md](../03-architecture/technology-stack.md) 为准：后端 **Java 21 + Spring Boot 3.x + Maven + MyBatis Plus + PostgreSQL**；前端 **React + TypeScript + Vite + pnpm**（业务系统第二/三阶段起）；AI 采用**自研 Gateway + HTTP Provider Adapter**；第一阶段不引入 Spring AI、Milvus、Agent 框架；向量能力第三阶段优先 **pgvector**。
 
-**原因：** 与 guideline「基于 Java 技术栈」一致；控制首阶段复杂度；底座与业务职责边界清晰。
+**原因：** 与 guideline「基于 Java 技术栈」一致；统一构建与包管理；控制首阶段复杂度。
+
+**说明：** 取代此前草稿中「Java 17 / MySQL 8 / Vue 3」等表述；若其他文档冲突，以本决策与 technology-stack 为准。
 
 ---
 
@@ -169,5 +171,21 @@
 **决策：** 第一阶段限流/熔断/配置缓存用 **Caffeine 单机内存**；Redis 延后至多实例或业务 Session 需要时。文件存储：底座无；小红书第二阶段 **本地目录 + MinIO（推荐）** 存素材。
 
 **原因：** 单人/小团队、单机部署足够；符合「不过度设计」原则。
+
+---
+
+## 2026-05-21：开发计划 v2 与 Admin API 任务补全
+
+**决策：** 重写 `ai-common-infra-development-plan.md` 为 2026.v2：每任务含「本次不做什么」「涉及文档」「涉及目录」；新增 **T-037**（models）、**T-038**（routes）、**T-039**（quota daily 可选）；T-001 锁定 **Java 21 + MyBatis Plus + Flyway + PostgreSQL**。
+
+**原因：** 上游架构/库表/接口/技术栈文档已齐备，任务需可直接指导编码；补齐 API 文档 §5.6～5.7 与可选配额查询的实现入口。
+
+---
+
+## 2026-05-21：全局过程文档与技术栈对齐修订
+
+**决策：** 按全局文档一致性检查结果修订 README（§6～§10、目录树、恢复路径）、guideline §2.4、progress、ai-handoff；统一引用 `technology-stack.md` 与 `ai-command-templates.md`。
+
+**原因：** 消除 MySQL/Java 17/Vue 与 PostgreSQL/Java 21/React 并存；明确前端不直连大模型、业务后端须经底座调用。
 
 ---

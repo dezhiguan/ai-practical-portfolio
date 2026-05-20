@@ -100,6 +100,7 @@ ai-practical-portfolio/
 │   │   └── smart-job-agent-product.md
 │   │
 │   ├── 03-architecture/
+│   │   ├── technology-stack.md
 │   │   ├── ai-common-infra-architecture.md
 │   │   ├── xhs-mom-helper-architecture.md
 │   │   └── smart-job-agent-architecture.md
@@ -107,6 +108,7 @@ ai-practical-portfolio/
 │   ├── 04-development/
 │   │   ├── development-plan.md
 │   │   ├── ai-common-infra-development-plan.md
+│   │   ├── ai-command-templates.md
 │   │   ├── frontend-development-guide.md
 │   │   ├── backend-development-guide.md
 │   │   ├── progress.md
@@ -115,7 +117,9 @@ ai-practical-portfolio/
 │   │   └── task-board.md
 │   │
 │   ├── 05-database/
+│   │   └── ai-common-infra-database.md
 │   ├── 06-api/
+│   │   └── ai-common-infra-api.md
 │   ├── 07-testing/
 │   └── 08-deployment/
 │
@@ -329,10 +333,11 @@ docs/08-deployment/
 
 当前不处理：
 
-1. 小红书自动发布
-2. 招聘网站自动投递
-3. 自动抓取第三方平台数据
-4. 自动回复外部用户消息
+1. 小红书、招聘平台相关业务功能（见 §9 关键约束）
+2. 小红书自动发布、自动登录、自动抓取
+3. 招聘网站自动登录、自动投递
+4. 自动抓取第三方平台数据
+5. 自动回复 HR 或外部用户消息
 
 ---
 
@@ -342,11 +347,13 @@ docs/08-deployment/
 
 1. 每次只开发一个明确模块
 2. 每个模块需要有清晰边界
-3. 所有 AI 调用必须经过统一 AI 网关
-4. 业务模块不直接调用具体模型 API
-5. 每个阶段完成后需要更新开发进度文档
-6. 重要决策需要记录到决策日志
-7. 中断后必须先阅读进度文档，再继续开发
+3. 所有 AI 调用必须经过统一 AI 网关（`ai-common-infra`）
+4. 业务系统后端通过底座统一接口调用大模型，不得直连模型供应商 API
+5. 前端不得直接调用大模型；AI 能力仅能通过业务后端或底座管理端 API 使用
+6. 技术选型以 `docs/03-architecture/technology-stack.md` 为准
+7. 每个阶段完成后需要更新开发进度文档
+8. 重要决策需要记录到决策日志
+9. 中断后必须先阅读进度文档，再继续开发
 
 ---
 
@@ -356,13 +363,15 @@ docs/08-deployment/
 
 1. 阅读 `README.md`
 2. 阅读 `docs/00-project-guideline.md`
-3. 阅读 `docs/04-development/development-plan.md`
-4. 阅读 `docs/04-development/progress.md`
-5. 阅读 `docs/04-development/decision-log.md`
-6. 阅读 `docs/04-development/ai-handoff.md`
-7. 阅读 `docs/04-development/task-board.md`
-8. 确认当前阶段、当前模块、已完成内容和下一步任务
-9. 从 `ai-handoff.md` 中记录的下一步继续
+3. 阅读 `docs/03-architecture/technology-stack.md`
+4. 阅读 `docs/04-development/development-plan.md`
+5. 阅读 `docs/04-development/progress.md`
+6. 阅读 `docs/04-development/decision-log.md`
+7. 阅读 `docs/04-development/ai-handoff.md`
+8. 阅读 `docs/04-development/task-board.md`
+9. 阅读 `docs/04-development/ai-command-templates.md`（执行开发前按需选用模板）
+10. 确认当前阶段、当前模块、已完成内容和下一步任务
+11. 从 `ai-handoff.md` 中记录的下一步继续
 
 建议每次阶段结束后更新：
 
@@ -393,15 +402,15 @@ docs/04-development/task-board.md
 
 ## 10. 推荐启动方式
 
-第一步先完成：
+第一步可先完成（**目录与文档占位**，不要求业务功能开发）：
 
 1. 项目目录初始化
 2. 文档目录初始化
-3. 通用 AI 技术底座模块初始化
-4. 小红书内容运营工作台模块初始化
-5. 智能求职 Agent 工作台模块初始化
+3. 通用 AI 技术底座模块目录初始化
+4. 小红书内容运营工作台模块目录初始化（占位）
+5. 智能求职 Agent 工作台模块目录初始化（占位）
 
-后续按照文档规划逐阶段推进。
+**功能开发**严格按阶段推进：当前仅实施第一阶段「通用 AI 技术底座」；小红书、求职 Agent 在第二、三阶段再开发业务功能。
 
 ---
 

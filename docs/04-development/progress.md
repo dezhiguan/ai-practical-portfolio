@@ -42,7 +42,7 @@
 | 文档 | 说明 |
 |------|------|
 | [development-plan.md](./development-plan.md) | 全项目四阶段 |
-| [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md) | 底座 0→1，T-001～T-050 |
+| [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md) | 底座 0→1，T-001～T-050（**2026.v2** 已对齐架构/库表/接口） |
 
 ### 3.4 项目目录结构（本次已完成）
 
@@ -60,11 +60,10 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 ### 3.5 文档一致性检查
 
-已对 README、guideline、底座需求/产品、两份开发计划做比对。
-
-- 阶段顺序、第一阶段边界、不做项、业务隔离：**一致**
-- 架构：**底座架构正文已完成**（`ai-common-infra-architecture.md`）；两业务架构仍为占位
-- 可选后续：README/guideline 第一阶段清单与需求 7.2 完全对齐；guideline 失败类型补「参数错误」
+- 2026-05-21：全局一致性检查（9 份过程/总纲文档）已完成修订
+- 阶段顺序、当前阶段、红线约束、AI 经底座：**一致**
+- 技术栈：以 `technology-stack.md` 为准（PostgreSQL / Maven / pnpm / React）；已修正 progress、handoff、README 等残留表述
+- 可选后续：guideline 失败类型补「参数错误」；对 `ai-common-infra-database.md` 等设计文档做技术栈复核
 
 ### 3.6 架构设计（2026-05-21）
 
@@ -88,12 +87,19 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 ### 3.9 技术栈说明（2026-05-21）
 
-- [technology-stack.md](../03-architecture/technology-stack.md) 正文已完成
-- 整体：Java 17 + Spring Boot 3 + MySQL 8 + Vue 3（业务/管理端分阶段）
-- 第一阶段：自研 Gateway、无 Redis/RAG/Agent；求职第三阶段 PG+pgvector
-- T-001 待锁定：JPA vs MyBatis-Plus、Maven、首个模型厂商
+- [technology-stack.md](../03-architecture/technology-stack.md) 正文已完成（**技术基准单一事实来源**）
+- 后端：Java 21 + Spring Boot 3.x + **Maven** + MyBatis Plus + **PostgreSQL**
+- 前端（第二/三阶段起）：React + TypeScript + Vite + **pnpm**
+- 第一阶段：自研 Gateway；Redis 可选；不引入 RAG/Milvus/Agent 框架
+- 待确认：管理端是否独立 `frontend/`、首个模型供应商
 
-### 3.10 开发过程文档
+### 3.10 开发计划刷新（2026-05-21）
+
+- [ai-common-infra-development-plan.md](./ai-common-infra-development-plan.md) 升级为 **2026.v2**
+- 全任务统一：任务目标、范围、本次不做什么、涉及文档、涉及目录、验收标准
+- 新增 **T-037～T-039**（模型/路由/日配额 Admin API）；依赖图与 AC 映射已更新
+
+### 3.11 开发过程文档
 
 持续维护：`progress.md`、`decision-log.md`、`ai-handoff.md`、`task-board.md`
 
@@ -125,13 +131,13 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 ### 优先级 3：可选文档维护
 
-5. 按一致性检查建议微调 README 4.1、guideline 相关章节
+5. ~~全局文档一致性检查（README / progress / handoff 等）~~（2026-05-21 已处理）
 
 ---
 
 ## 六、待确认事项（进入 T-008 / T-012 前）
 
-1. ~~Java 后端版本~~ → Java 17 + Spring Boot 3（见 technology-stack.md）；构建工具 JPA/ORM 待 T-001 锁定
+1. ~~Java 后端版本~~ → Java 21 + Spring Boot 3 + MyBatis Plus（见 technology-stack.md、开发计划 T-001）
 2. 管理端前端形态及目录（是否增加 `ai-common-infra/frontend/`）
 3. ~~调用日志存储方案~~ → 已定为关系型 DB（见数据库设计 §2.1）
 4. 首个大模型供应商
@@ -143,8 +149,15 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 - 小红书、求职 Agent 业务编码
 - 自动发布 / 登录 / 抓取 / 自动回复 HR
-- Prompt 管理、Agent 编排、RAG、动态路由（底座第一阶段）
+- 前端直连大模型；业务后端直连模型供应商 API
+- Prompt 管理、Agent 编排、RAG、Milvus、动态路由（底座第一阶段）
 - 流式调用、路由写接口、报表导出（接口文档 §八已列不做的扩展）
+
+## 七.1 关键约束（与 README、ai-command-templates 对齐）
+
+- 所有 LLM 调用经 `ai-common-infra` 统一网关
+- 业务前端不直连大模型；业务后端不直连供应商 API
+- 主数据库：**PostgreSQL**；后端构建：**Maven**；前端包管理：**pnpm**
 
 ---
 
