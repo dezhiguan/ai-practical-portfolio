@@ -90,11 +90,25 @@ ai-practical-portfolio/
 │   ├── 00-project-guideline.md
 │   │
 │   ├── 01-requirements/
+│   │   ├── ai-common-infra-requirements.md
+│   │   ├── xhs-mom-helper-requirements.md
+│   │   └── smart-job-agent-requirements.md
+│   │
 │   ├── 02-product/
+│   │   ├── ai-common-infra-product.md
+│   │   ├── xhs-mom-helper-product.md
+│   │   └── smart-job-agent-product.md
+│   │
 │   ├── 03-architecture/
+│   │   ├── ai-common-infra-architecture.md
+│   │   ├── xhs-mom-helper-architecture.md
+│   │   └── smart-job-agent-architecture.md
 │   │
 │   ├── 04-development/
 │   │   ├── development-plan.md
+│   │   ├── ai-common-infra-development-plan.md
+│   │   ├── frontend-development-guide.md
+│   │   ├── backend-development-guide.md
 │   │   ├── progress.md
 │   │   ├── decision-log.md
 │   │   ├── ai-handoff.md
@@ -106,8 +120,18 @@ ai-practical-portfolio/
 │   └── 08-deployment/
 │
 ├── ai-common-infra/
+│   ├── backend/
+│   └── README.md
+│
 ├── xhs-mom-helper/
+│   ├── backend/
+│   ├── frontend/
+│   └── README.md
+│
 └── smart-job-agent/
+    ├── backend/
+    ├── frontend/
+    └── README.md
 ```
 
 ---
