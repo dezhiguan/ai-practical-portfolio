@@ -35,8 +35,7 @@
 
 | 任务 | 备注 |
 |------|------|
-| [ ] `docs/05-database/` 底座库表说明 | ≈ T-018 后 |
-| [ ] `docs/06-api/` 接口说明 | 架构后 |
+| [ ] `docs/06-api/` 底座接口说明 | 可与 T-004～T-005 同步 |
 | [ ] `docs/07-testing/` 测试说明 | 架构后 |
 | [ ] 可选：README / guideline 第一阶段清单对齐 | 一致性检查建议 |
 
@@ -80,6 +79,7 @@
 - [x] `smart-job-agent/{backend,frontend}/` 占位
 - [x] 三份 `docs/03-architecture/*-architecture.md` 占位
 - [x] `ai-common-infra-architecture.md` 正文（模块边界、调用链、组件职责、阶段范围、T-xxx 映射）
+- [x] `ai-common-infra-database.md` 正文（10 张第一阶段表、数据来源、索引、T-018 对齐）
 - [x] `frontend-development-guide.md`、`backend-development-guide.md` 占位
 - [x] README 第三节目录树更新
 
@@ -97,7 +97,7 @@
 ## 六、下一步 Top 3
 
 1. 执行 **T-001**（`ai-common-infra/backend/` 工程骨架）  
-2. 可选：充实 `backend-development-guide.md`（T-002～T-003）  
+2. 可选：`docs/06-api/` 或 `backend-development-guide.md`  
 3. 完成后更新 progress、ai-handoff、本看板
 
 ---

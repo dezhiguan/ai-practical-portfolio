@@ -6,7 +6,7 @@
 第一阶段：通用 AI 技术底座
 ```
 
-**整体状态：** 文档体系与目录骨架已就绪；底座架构正文已完成；编码未开始。
+**整体状态：** 文档体系与目录骨架已就绪；底座架构与数据库设计正文已完成；编码未开始。
 
 ---
 
@@ -72,7 +72,14 @@ docs/04-development/      → frontend/backend-development-guide 占位
 - 覆盖：架构目标、模块边界、调用链路、核心组件职责、业务复用、第一阶段范围、T-xxx 映射
 - 未包含：数据库表结构、接口细节、代码实现
 
-### 3.7 开发过程文档
+### 3.7 数据库设计（2026-05-21）
+
+- [ai-common-infra-database.md](../05-database/ai-common-infra-database.md) 正文已完成
+- 10 张第一阶段表：模型/路由/调用日志/尝试明细/额度策略/日用量
+- 含数据来源分类（业务请求 / 模型响应 / 系统统计）、索引建议、T-018 对齐
+- 未包含：完整建表 SQL、代码实现
+
+### 3.8 开发过程文档
 
 持续维护：`progress.md`、`decision-log.md`、`ai-handoff.md`、`task-board.md`
 
@@ -100,7 +107,7 @@ docs/04-development/      → frontend/backend-development-guide 占位
 ### 优先级 2：文档（与编码并行）
 
 3. 可选：充实 [backend-development-guide.md](./backend-development-guide.md)（与 T-002、T-003 同步）
-4. T-018 前补充 `docs/05-database/` 底座库表说明
+4. 补充 `docs/06-api/` 底座接口说明（可与 T-004～T-005 同步）
 
 ### 优先级 3：可选文档维护
 
@@ -112,7 +119,7 @@ docs/04-development/      → frontend/backend-development-guide 占位
 
 1. Java 后端版本与构建方式（guideline 为 Java 技术栈）
 2. 管理端前端形态及目录（是否增加 `ai-common-infra/frontend/`）
-3. 调用日志存储方案（关系型 DB 等）
+3. ~~调用日志存储方案~~ → 已定为关系型 DB（见数据库设计 §2.1）
 4. 首个大模型供应商
 5. 第一阶段是否实现「按用户限流」（T-028 当前为全局 + 按业务类型）
 
@@ -123,7 +130,7 @@ docs/04-development/      → frontend/backend-development-guide 占位
 - 小红书、求职 Agent 业务编码
 - 自动发布 / 登录 / 抓取 / 自动回复 HR
 - Prompt 管理、Agent 编排、RAG、动态路由（底座第一阶段）
-- `05-database` / `06-api` 详设（架构稳定后）
+- `06-api` 接口详设（可与 T-004 起逐步补充）
 
 ---
 
